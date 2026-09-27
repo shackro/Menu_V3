@@ -26,12 +26,22 @@ const CATEGORIES = [
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("breakfast");
-  const [whatsappToast, setWhatsappToast] = useState(true);
+  const [whatsappToast, setWhatsappToast] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedNumber = localStorage.getItem('userWhatsappNumber');
+      const dismissed = sessionStorage.getItem('whatsappDismissed');
+      return !savedNumber && !dismissed;
+    }
+    return true;
+  });
   const [showWhatsappModal, setShowWhatsappModal] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [whatsappSubmitted, setWhatsappSubmitted] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [breakfastPage, setBreakfastPage] = useState(1);
+  const [lunchPage, setLunchPage] = useState(1);
+  const itemsPerPage = 3;
   const { format } = useCurrency();
   const addItem = useCartStore((state) => state.addItem);
 
@@ -99,17 +109,26 @@ export default function HomePage() {
 
     return menuItems.filter(item =>
       item.is_available && item.category?.name === categoryNames[categoryId]
-    ).slice(0, 3);
+    );
+  };
+
+  // Get paginated items
+  const getPaginatedItems = (categoryId, page) => {
+    const items = getCategoryItems(categoryId);
+    const startIdx = (page - 1) * itemsPerPage;
+    return items.slice(startIdx, startIdx + itemsPerPage);
+  };
+
+  // Get total pages
+  const getTotalPages = (categoryId) => {
+    const items = getCategoryItems(categoryId);
+    return Math.ceil(items.length / itemsPerPage);
   };
 
   // Get best sellers (limit to 3)
   const bestSellers = menuItems
     .filter(i => i.status_badge === 'best_seller' && i.is_available)
     .slice(0, 3);
-
-  // Get breakfast and lunch for weekend menu
-  const breakfastItems = getCategoryItems("breakfast");
-  const lunchItems = getCategoryItems("lunch");
 
   const fadeUp = {
     hidden: { opacity: 0, y: 20 },
@@ -179,8 +198,13 @@ export default function HomePage() {
               isDark
                 ? 'text-neutral-500 hover:text-neutral-300'
                 : 'text-gray-600 hover:text-gray-900'
-            }`}>
-              <RefreshCw className="w-2.5 h-2.5" /> Reload Menu
+            }`}
+            onClick={() => {
+              setWhatsappToast(false);
+              // Optionally store a flag to not show again for this session
+              sessionStorage.setItem('whatsappDismissed', 'true');
+            }}>
+              <RefreshCw className="w-2.5 h-2.5" /> Dismiss
             </button>
           </motion.div>
         )}
@@ -479,8 +503,8 @@ export default function HomePage() {
                   <p className={`text-xs transition-colors duration-300 ${
                     isDark ? 'text-neutral-500' : 'text-gray-600'
                   }`}>Loading breakfast items...</p>
-                ) : breakfastItems.length > 0 ? (
-                  breakfastItems.map((item) => (
+                ) : getPaginatedItems("breakfast", breakfastPage).length > 0 ? (
+                  getPaginatedItems("breakfast", breakfastPage).map((item) => (
                     <MenuItemRow key={item.documentId} item={item} format={format} addItem={addItem} isDark={isDark} />
                   ))
                 ) : (
@@ -489,6 +513,48 @@ export default function HomePage() {
                   }`}>No breakfast items available</p>
                 )}
               </div>
+              {/* Breakfast Pagination */}
+              {getTotalPages("breakfast") > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-4 border-t" style={{
+                  borderColor: isDark ? 'rgb(38 38 38)' : 'rgb(209 213 219)'
+                }}>
+                  <button
+                    onClick={() => setBreakfastPage(p => Math.max(1, p - 1))}
+                    disabled={breakfastPage === 1}
+                    className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-300 ${
+                      breakfastPage === 1
+                        ? isDark
+                          ? 'bg-neutral-800 text-neutral-600 cursor-not-allowed'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : isDark
+                          ? 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'
+                          : 'bg-amber-500/20 text-amber-600 hover:bg-amber-500/30'
+                    }`}
+                  >
+                    ← Prev
+                  </button>
+                  <span className={`px-3 py-1 text-xs font-semibold transition-colors duration-300 ${
+                    isDark ? 'text-neutral-400' : 'text-gray-700'
+                  }`}>
+                    {breakfastPage} / {getTotalPages("breakfast")}
+                  </span>
+                  <button
+                    onClick={() => setBreakfastPage(p => Math.min(getTotalPages("breakfast"), p + 1))}
+                    disabled={breakfastPage === getTotalPages("breakfast")}
+                    className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-300 ${
+                      breakfastPage === getTotalPages("breakfast")
+                        ? isDark
+                          ? 'bg-neutral-800 text-neutral-600 cursor-not-allowed'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : isDark
+                          ? 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'
+                          : 'bg-amber-500/20 text-amber-600 hover:bg-amber-500/30'
+                    }`}
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Lunch */}
@@ -512,8 +578,8 @@ export default function HomePage() {
                   <p className={`text-xs transition-colors duration-300 ${
                     isDark ? 'text-neutral-500' : 'text-gray-600'
                   }`}>Loading lunch items...</p>
-                ) : lunchItems.length > 0 ? (
-                  lunchItems.map((item) => (
+                ) : getPaginatedItems("lunch", lunchPage).length > 0 ? (
+                  getPaginatedItems("lunch", lunchPage).map((item) => (
                     <MenuItemRow key={item.documentId} item={item} format={format} addItem={addItem} isDark={isDark} />
                   ))
                 ) : (
@@ -522,6 +588,48 @@ export default function HomePage() {
                   }`}>No lunch items available</p>
                 )}
               </div>
+              {/* Lunch Pagination */}
+              {getTotalPages("lunch") > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-4 border-t" style={{
+                  borderColor: isDark ? 'rgb(38 38 38)' : 'rgb(209 213 219)'
+                }}>
+                  <button
+                    onClick={() => setLunchPage(p => Math.max(1, p - 1))}
+                    disabled={lunchPage === 1}
+                    className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-300 ${
+                      lunchPage === 1
+                        ? isDark
+                          ? 'bg-neutral-800 text-neutral-600 cursor-not-allowed'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : isDark
+                          ? 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'
+                          : 'bg-amber-500/20 text-amber-600 hover:bg-amber-500/30'
+                    }`}
+                  >
+                    ← Prev
+                  </button>
+                  <span className={`px-3 py-1 text-xs font-semibold transition-colors duration-300 ${
+                    isDark ? 'text-neutral-400' : 'text-gray-700'
+                  }`}>
+                    {lunchPage} / {getTotalPages("lunch")}
+                  </span>
+                  <button
+                    onClick={() => setLunchPage(p => Math.min(getTotalPages("lunch"), p + 1))}
+                    disabled={lunchPage === getTotalPages("lunch")}
+                    className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-300 ${
+                      lunchPage === getTotalPages("lunch")
+                        ? isDark
+                          ? 'bg-neutral-800 text-neutral-600 cursor-not-allowed'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : isDark
+                          ? 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'
+                          : 'bg-amber-500/20 text-amber-600 hover:bg-amber-500/30'
+                    }`}
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
