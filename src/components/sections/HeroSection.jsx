@@ -28,7 +28,7 @@ export default function HeroSection() {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-  const heroWords = ["Freshly", "Prepared", "Every", "Single", "Day"];
+  const heroWords = ["Authentic", "Kenyan", "Cuisine", "Crafted", "Daily"];
 
   // Theme-aware hero images
   const heroImage = isDark
@@ -40,8 +40,8 @@ export default function HeroSection() {
     : "from-white/80 via-white/60 to-white/70";
 
   return (
-    <div ref={containerRef} className={`relative min-h-screen overflow-hidden transition-colors duration-500 ${
-      isDark ? 'bg-black' : 'bg-white'
+      <div ref={containerRef} className={`relative min-h-screen overflow-hidden transition-colors duration-500 ${
+      isDark ? 'bg-black' : 'bg-gray-50'
     }`}>
 
       {/* Background Image with Parallax */}
@@ -192,7 +192,7 @@ export default function HeroSection() {
                   ease: "easeOut"
                 }}
                 className={`inline-block mr-3 md:mr-4 ${
-                  i === 2 ? (isDark ? 'text-amber-500' : 'text-amber-600') : ''
+                  i === 1 ? (isDark ? 'text-amber-500' : 'text-amber-600') : ''
                 }`}
               >
                 {word}

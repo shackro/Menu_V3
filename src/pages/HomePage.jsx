@@ -27,6 +27,9 @@ const CATEGORIES = [
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("breakfast");
   const [whatsappToast, setWhatsappToast] = useState(true);
+  const [showWhatsappModal, setShowWhatsappModal] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [whatsappSubmitted, setWhatsappSubmitted] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { format } = useCurrency();
@@ -50,6 +53,20 @@ export default function HomePage() {
     observer.observe(el, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
   }, []);
+
+  // Handle WhatsApp number submission
+  const handleWhatsappSubmit = (e) => {
+    e.preventDefault();
+    if (whatsappNumber.trim()) {
+      // Store in localStorage
+      localStorage.setItem('userWhatsappNumber', whatsappNumber);
+      setWhatsappSubmitted(true);
+      setShowWhatsappModal(false);
+      setWhatsappToast(false);
+      // Reset after 3 seconds
+      setTimeout(() => setWhatsappSubmitted(false), 3000);
+    }
+  };
 
   // Load menu data on mount
   useEffect(() => {
@@ -103,7 +120,7 @@ export default function HomePage() {
     <div className={`min-h-screen font-sans selection:bg-amber-500 antialiased overflow-x-hidden transition-colors duration-500 ${
       isDark
         ? 'bg-neutral-950 text-neutral-50 selection:text-black'
-        : 'bg-white text-gray-900 selection:text-white'
+        : 'bg-gray-50 text-gray-900 selection:text-white'
     }`}>
 
       {/* HERO SECTION - Full screen animated hero with threads and chef profile */}
@@ -149,11 +166,13 @@ export default function HomePage() {
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <button className={`w-full text-white text-[11px] font-bold py-2.5 px-3 rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg ${
-              isDark
-                ? 'bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 shadow-amber-900/20'
-                : 'bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 shadow-amber-500/20'
-            }`}>
+            <button
+              onClick={() => setShowWhatsappModal(true)}
+              className={`w-full text-white text-[11px] font-bold py-2.5 px-3 rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg ${
+                isDark
+                  ? 'bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 shadow-amber-900/20'
+                  : 'bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 shadow-amber-500/20'
+              }`}>
               <MessageCircle className="w-3.5 h-3.5" /> Add WhatsApp for Updates
             </button>
             <button className={`text-[10px] flex items-center justify-center gap-1 mt-[-4px] transition-colors duration-300 ${
@@ -163,6 +182,122 @@ export default function HomePage() {
             }`}>
               <RefreshCw className="w-2.5 h-2.5" /> Reload Menu
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* WHATSAPP MODAL POPUP */}
+      <AnimatePresence>
+        {showWhatsappModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowWhatsappModal(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className={`w-full max-w-md rounded-2xl p-6 shadow-2xl transition-colors duration-300 ${
+                isDark
+                  ? 'bg-neutral-900 border border-neutral-800'
+                  : 'bg-white border border-gray-200'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className={`text-xl font-bold transition-colors duration-300 ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Join Our WhatsApp
+                </h3>
+                <button
+                  onClick={() => setShowWhatsappModal(false)}
+                  className={`p-1 rounded-lg transition-colors duration-300 ${
+                    isDark
+                      ? 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  }`}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <p className={`mb-6 transition-colors duration-300 ${
+                isDark ? 'text-neutral-400' : 'text-gray-700'
+              }`}>
+                Get instant updates on special offers, new menu items, and exclusive deals!
+              </p>
+
+              <form onSubmit={handleWhatsappSubmit} className="space-y-4">
+                <div>
+                  <label className={`block text-sm font-semibold mb-2 transition-colors duration-300 ${
+                    isDark ? 'text-neutral-300' : 'text-gray-800'
+                  }`}>
+                    WhatsApp Number
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="+254 7XX XXX XXX"
+                    value={whatsappNumber}
+                    onChange={(e) => setWhatsappNumber(e.target.value)}
+                    className={`w-full px-4 py-2 rounded-lg border transition-colors duration-300 ${
+                      isDark
+                        ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-amber-500 focus:outline-none'
+                        : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-amber-500 focus:outline-none'
+                    }`}
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowWhatsappModal(false)}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${
+                      isDark
+                        ? 'bg-neutral-800 hover:bg-neutral-700 text-white'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+                    }`}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold text-white flex items-center justify-center gap-2 transition-all duration-300 ${
+                      isDark
+                        ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600'
+                        : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500'
+                    }`}
+                  >
+                    <MessageCircle className="w-4 h-4" /> Join Now
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* SUCCESS NOTIFICATION */}
+      <AnimatePresence>
+        {whatsappSubmitted && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 right-6 z-50"
+          >
+            <div className={`px-6 py-3 rounded-full shadow-lg flex items-center gap-2 transition-colors duration-300 ${
+              isDark
+                ? 'bg-green-600 text-white'
+                : 'bg-green-500 text-white'
+            }`}>
+              <CheckCircle2 className="w-5 h-5" />
+              <span className="font-semibold">WhatsApp number saved!</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -532,13 +667,19 @@ export default function HomePage() {
 }
 
 // --- REUSABLE MENU ITEM ROW COMPONENT ---
-function MenuItemRow({ item, format, addItem }) {
+function MenuItemRow({ item, format, addItem, isDark }) {
   return (
     <motion.div
       whileHover={{ x: 4 }}
-      className="group flex items-start gap-4 p-3 rounded-xl hover:bg-neutral-800/30 transition-colors"
+      className={`group flex items-start gap-4 p-3 rounded-xl transition-all duration-300 ${
+        isDark
+          ? 'hover:bg-neutral-800/30'
+          : 'hover:bg-gray-200/50'
+      }`}
     >
-      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-neutral-800">
+      <div className={`w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border transition-colors duration-300 ${
+        isDark ? 'border-neutral-800' : 'border-gray-300'
+      }`}>
         <img
           src={getCmsImageUrl(item.images || item.image, 'thumbnail')}
           alt={item.name}
@@ -548,14 +689,22 @@ function MenuItemRow({ item, format, addItem }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2 mb-1">
-          <h5 className="text-sm font-bold text-neutral-200 group-hover:text-amber-400 transition-colors truncate">
+          <h5 className={`text-sm font-bold truncate transition-colors duration-300 ${
+            isDark
+              ? 'text-neutral-200 group-hover:text-amber-400'
+              : 'text-gray-900 group-hover:text-amber-600'
+          }`}>
             {item.name}
           </h5>
-          <span className="text-sm font-black text-amber-500 whitespace-nowrap">
+          <span className={`text-sm font-black whitespace-nowrap transition-colors duration-300 ${
+            isDark ? 'text-amber-500' : 'text-amber-600'
+          }`}>
             {format(item.price)}
           </span>
         </div>
-        <p className="text-[11px] text-neutral-500 leading-relaxed line-clamp-2 mb-2">
+        <p className={`text-[11px] leading-relaxed line-clamp-2 mb-2 transition-colors duration-300 ${
+          isDark ? 'text-neutral-500' : 'text-gray-700'
+        }`}>
           {item.description}
         </p>
         <div className="flex items-center gap-2">
@@ -571,11 +720,22 @@ function MenuItemRow({ item, format, addItem }) {
                 specialInstructions: '',
               });
             }}
-            className="w-6 h-6 rounded-full bg-neutral-800 hover:bg-amber-500 hover:text-black text-neutral-400 flex items-center justify-center transition-all"
+            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
+              isDark
+                ? 'bg-neutral-800 hover:bg-amber-500 hover:text-black text-neutral-400'
+                : 'bg-gray-300 hover:bg-amber-600 hover:text-white text-gray-700'
+            }`}
           >
             <ShoppingBag className="w-3 h-3" />
           </button>
-          <Link to={`/dish/${item.documentId || item.id}`} className="w-6 h-6 rounded-full bg-neutral-800 hover:bg-neutral-700 text-neutral-400 flex items-center justify-center transition-all">
+          <Link
+            to={`/dish/${item.documentId || item.id}`}
+            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
+              isDark
+                ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-400'
+                : 'bg-gray-300 hover:bg-gray-400 text-gray-700'
+            }`}
+          >
             <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
