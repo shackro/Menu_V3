@@ -32,6 +32,25 @@ export default function HomePage() {
   const { format } = useCurrency();
   const addItem = useCartStore((state) => state.addItem);
 
+  // Track theme changes
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const el = document.documentElement;
+    const updateTheme = () => setIsDark(el.classList.contains('dark'));
+    updateTheme();
+
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   // Load menu data on mount
   useEffect(() => {
     async function loadData() {
@@ -81,7 +100,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-50 font-sans selection:bg-amber-500 selection:text-black antialiased overflow-x-hidden">
+    <div className={`min-h-screen font-sans selection:bg-amber-500 antialiased overflow-x-hidden transition-colors duration-500 ${
+      isDark
+        ? 'bg-neutral-950 text-neutral-50 selection:text-black'
+        : 'bg-white text-gray-900 selection:text-white'
+    }`}>
 
       {/* HERO SECTION - Full screen animated hero with threads and chef profile */}
       <HeroSection />
@@ -93,26 +116,51 @@ export default function HomePage() {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            className="fixed top-24 right-4 z-50 max-w-xs w-full bg-neutral-900/95 backdrop-blur-md border border-neutral-800 p-4 rounded-xl shadow-2xl flex flex-col gap-3"
+            className={`fixed top-24 right-4 z-50 max-w-xs w-full backdrop-blur-md p-4 rounded-xl shadow-2xl flex flex-col gap-3 border transition-all duration-300 ${
+              isDark
+                ? 'bg-neutral-900/95 border-neutral-800'
+                : 'bg-gray-100/95 border-gray-200'
+            }`}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-500/10 rounded-lg">
+                <div className={`p-2 rounded-lg transition-colors duration-300 ${
+                  isDark ? 'bg-red-500/10' : 'bg-red-500/20'
+                }`}>
                   <span className="text-xl">🍽️</span>
                 </div>
                 <div>
-                  <h4 className="text-[10px] font-black text-neutral-500 uppercase tracking-wider">Welcome to:</h4>
-                  <p className="text-sm font-extrabold text-amber-400 truncate">Savanna Grill</p>
+                  <h4 className={`text-[10px] font-black uppercase tracking-wider transition-colors duration-300 ${
+                    isDark ? 'text-neutral-500' : 'text-gray-600'
+                  }`}>Welcome to:</h4>
+                  <p className={`text-sm font-extrabold transition-colors duration-300 ${
+                    isDark ? 'text-amber-400' : 'text-amber-600'
+                  }`}>Savanna Grill</p>
                 </div>
               </div>
-              <button onClick={() => setWhatsappToast(false)} className="text-neutral-500 hover:text-neutral-300 p-1">
+              <button
+                onClick={() => setWhatsappToast(false)}
+                className={`p-1 transition-colors duration-300 ${
+                  isDark
+                    ? 'text-neutral-500 hover:text-neutral-300'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <button className="w-full bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-white text-[11px] font-bold py-2.5 px-3 rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-900/20">
+            <button className={`w-full text-white text-[11px] font-bold py-2.5 px-3 rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg ${
+              isDark
+                ? 'bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 shadow-amber-900/20'
+                : 'bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 shadow-amber-500/20'
+            }`}>
               <MessageCircle className="w-3.5 h-3.5" /> Add WhatsApp for Updates
             </button>
-            <button className="text-[10px] text-neutral-500 hover:text-neutral-300 flex items-center justify-center gap-1 mt-[-4px]">
+            <button className={`text-[10px] flex items-center justify-center gap-1 mt-[-4px] transition-colors duration-300 ${
+              isDark
+                ? 'text-neutral-500 hover:text-neutral-300'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}>
               <RefreshCw className="w-2.5 h-2.5" /> Reload Menu
             </button>
           </motion.div>
@@ -125,8 +173,12 @@ export default function HomePage() {
           initial="hidden" whileInView="visible" viewport={{ once: true }}
           className="text-center space-y-2 mb-8"
         >
-          <span className="text-[11px] font-black tracking-[0.2em] text-amber-500 uppercase">Discover the Flow</span>
-          <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-neutral-200">Browse Categories</h2>
+          <span className={`text-[11px] font-black tracking-[0.2em] uppercase transition-colors duration-300 ${
+            isDark ? 'text-amber-500' : 'text-amber-600'
+          }`}>Discover the Flow</span>
+          <h2 className={`text-xl md:text-2xl font-black uppercase tracking-tight transition-colors duration-300 ${
+            isDark ? 'text-neutral-200' : 'text-gray-900'
+          }`}>Browse Categories</h2>
         </motion.div>
 
         <motion.div
@@ -137,8 +189,6 @@ export default function HomePage() {
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             const isActive = activeCategory === cat.id;
-            const itemCount = getCategoryItems(cat.id).length;
-
             return (
               <motion.button
                 key={cat.id}
@@ -146,19 +196,37 @@ export default function HomePage() {
                 whileHover={{ y: -4 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all group ${
+                className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-300 ${
                   isActive
-                    ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/5'
-                    : 'bg-neutral-900/40 border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                    ? isDark
+                      ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/5'
+                      : 'bg-amber-500/20 border-amber-500/60 text-amber-700 shadow-lg shadow-amber-500/10'
+                    : isDark
+                      ? 'bg-neutral-900/40 border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                      : 'bg-gray-100/60 border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900'
                 }`}
               >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all ${
-                  isActive ? 'bg-amber-500 text-black' : 'bg-neutral-800 group-hover:bg-neutral-700'
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all duration-300 ${
+                  isActive
+                    ? isDark
+                      ? 'bg-amber-500 text-black'
+                      : 'bg-amber-600 text-white'
+                    : isDark
+                      ? 'bg-neutral-800 group-hover:bg-neutral-700'
+                      : 'bg-gray-300 group-hover:bg-gray-400'
                 }`}>
                   <Icon className="w-5 h-5" />
                 </div>
                 <span className="text-[11px] font-bold tracking-tight truncate w-full text-center">{cat.name}</span>
-                <span className={`text-[9px] font-mono mt-0.5 ${isActive ? 'text-amber-500/80' : 'text-neutral-600'}`}>
+                <span className={`text-[9px] font-mono mt-0.5 transition-colors duration-300 ${
+                  isActive
+                    ? isDark
+                      ? 'text-amber-500/80'
+                      : 'text-amber-600/80'
+                    : isDark
+                      ? 'text-neutral-600'
+                      : 'text-gray-500'
+                }`}>
                   12+ items
                 </span>
               </motion.button>
@@ -173,44 +241,76 @@ export default function HomePage() {
           initial="hidden" whileInView="visible" viewport={{ once: true }}
           className="text-center space-y-2 mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-neutral-100">Full Weekend Menu</h2>
-          <p className="text-sm text-neutral-500">Browse our complete culinary timeline by meal hour</p>
+          <h2 className={`text-3xl md:text-4xl font-black uppercase tracking-tighter transition-colors duration-300 ${
+            isDark ? 'text-neutral-100' : 'text-gray-900'
+          }`}>Full Weekend Menu</h2>
+          <p className={`text-sm transition-colors duration-300 ${
+            isDark ? 'text-neutral-500' : 'text-gray-600'
+          }`}>Browse our complete culinary timeline by meal hour</p>
         </motion.div>
 
-        {/* The Centralized Framed Gold Menu Sheet Container */}
+        {/* The Weekend Menu Container */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative bg-neutral-900/30 border border-amber-500/20 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm overflow-hidden"
+          className={`relative rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm overflow-hidden border transition-all duration-300 ${
+            isDark
+              ? 'bg-neutral-900/30 border-amber-500/20'
+              : 'bg-gray-50/80 border-amber-500/30'
+          }`}
         >
           {/* Subtle background glow */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
+          <div className={`absolute top-0 right-0 w-96 h-96 rounded-full blur-[100px] pointer-events-none transition-colors duration-300 ${
+            isDark ? 'bg-amber-500/5' : 'bg-amber-500/10'
+          }`} />
 
-          {/* Header Internal Branding */}
-          <div className="flex flex-col md:flex-row items-center justify-between border-b border-neutral-800/80 pb-8 mb-10 gap-6 relative z-10">
+          {/* Header */}
+          <div className={`flex flex-col md:flex-row items-center justify-between border-b pb-8 mb-10 gap-6 relative z-10 transition-colors duration-300 ${
+            isDark ? 'border-neutral-800/80' : 'border-gray-300/60'
+          }`}>
             <div className="text-center md:text-left">
               <div className="flex items-center gap-2 justify-center md:justify-start mb-2">
-                <Utensils className="w-4 h-4 text-amber-500" />
-                <span className="text-sm text-amber-500 font-serif italic tracking-wide">Savanna Grill</span>
+                <Utensils className={`w-4 h-4 transition-colors duration-300 ${
+                  isDark ? 'text-amber-500' : 'text-amber-600'
+                }`} />
+                <span className={`text-sm font-serif italic tracking-wide transition-colors duration-300 ${
+                  isDark ? 'text-amber-500' : 'text-amber-600'
+                }`}>Savanna Grill</span>
               </div>
-              <h3 className="text-4xl md:text-5xl font-serif text-neutral-100 tracking-tight">
-                Weekend <span className="font-sans font-black block text-5xl md:text-6xl uppercase text-neutral-300 mt-1">Menu</span>
+              <h3 className={`text-4xl md:text-5xl font-serif tracking-tight transition-colors duration-300 ${
+                isDark ? 'text-neutral-100' : 'text-gray-900'
+              }`}>
+                Weekend <span className={`font-sans font-black block text-5xl md:text-6xl uppercase mt-1 transition-colors duration-300 ${
+                  isDark ? 'text-neutral-300' : 'text-gray-800'
+                }`}>Menu</span>
               </h3>
               <div className="flex items-center gap-2 mt-4 justify-center md:justify-start">
-                <div className="h-px w-12 bg-amber-500/50" />
+                <div className={`h-px w-12 transition-colors duration-300 ${
+                  isDark ? 'bg-amber-500/50' : 'bg-amber-600/50'
+                }`} />
                 <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500/50" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500/20" />
+                  <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
+                    isDark ? 'bg-amber-500' : 'bg-amber-600'
+                  }`} />
+                  <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
+                    isDark ? 'bg-amber-500/50' : 'bg-amber-600/50'
+                  }`} />
+                  <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
+                    isDark ? 'bg-amber-500/20' : 'bg-amber-600/20'
+                  }`} />
                 </div>
-                <div className="h-px w-12 bg-amber-500/50" />
+                <div className={`h-px w-12 transition-colors duration-300 ${
+                  isDark ? 'bg-amber-500/50' : 'bg-amber-600/50'
+                }`} />
               </div>
             </div>
 
-            {/* Embedded Visual Feature Card */}
-            <div className="relative w-48 h-32 rounded-xl overflow-hidden border border-neutral-800 shadow-xl rotate-2 group">
+            {/* Feature Image */}
+            <div className="relative w-48 h-32 rounded-xl overflow-hidden border shadow-xl rotate-2 group transition-all duration-300" style={{
+              borderColor: isDark ? 'rgb(38 38 38)' : 'rgb(209 213 219)'
+            }}>
               <img
                 src="https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=400&q=80"
                 alt="Signature Dish"
@@ -221,47 +321,70 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Time of Day Two-Column Grid Alignment */}
+          {/* Menu Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
-
-            {/* Breakfast Timeline Segment */}
+            {/* Breakfast */}
             <div className="space-y-6">
-              <div className="flex items-center gap-3 border-b border-neutral-800 pb-3">
-                <div className="p-2 bg-amber-500/10 rounded-lg">
-                  <Utensils className="w-5 h-5 text-amber-500" />
+              <div className={`flex items-center gap-3 border-b pb-3 transition-colors duration-300 ${
+                isDark ? 'border-neutral-800' : 'border-gray-300'
+              }`}>
+                <div className={`p-2 rounded-lg transition-colors duration-300 ${
+                  isDark ? 'bg-amber-500/10' : 'bg-amber-500/20'
+                }`}>
+                  <Utensils className={`w-5 h-5 transition-colors duration-300 ${
+                    isDark ? 'text-amber-500' : 'text-amber-600'
+                  }`} />
                 </div>
-                <h4 className="text-xl font-serif text-neutral-200 tracking-wide">Breakfast</h4>
+                <h4 className={`text-xl font-serif tracking-wide transition-colors duration-300 ${
+                  isDark ? 'text-neutral-200' : 'text-gray-900'
+                }`}>Breakfast</h4>
               </div>
               <div className="space-y-5">
                 {loading ? (
-                  <p className="text-neutral-500 text-xs">Loading breakfast items...</p>
+                  <p className={`text-xs transition-colors duration-300 ${
+                    isDark ? 'text-neutral-500' : 'text-gray-600'
+                  }`}>Loading breakfast items...</p>
                 ) : breakfastItems.length > 0 ? (
                   breakfastItems.map((item) => (
-                    <MenuItemRow key={item.documentId} item={item} format={format} addItem={addItem} />
+                    <MenuItemRow key={item.documentId} item={item} format={format} addItem={addItem} isDark={isDark} />
                   ))
                 ) : (
-                  <p className="text-neutral-500 text-xs">No breakfast items available</p>
+                  <p className={`text-xs transition-colors duration-300 ${
+                    isDark ? 'text-neutral-500' : 'text-gray-600'
+                  }`}>No breakfast items available</p>
                 )}
               </div>
             </div>
 
-            {/* Lunch Timeline Segment */}
+            {/* Lunch */}
             <div className="space-y-6">
-              <div className="flex items-center gap-3 border-b border-neutral-800 pb-3">
-                <div className="p-2 bg-amber-500/10 rounded-lg">
-                  <Sun className="w-5 h-5 text-amber-500" />
+              <div className={`flex items-center gap-3 border-b pb-3 transition-colors duration-300 ${
+                isDark ? 'border-neutral-800' : 'border-gray-300'
+              }`}>
+                <div className={`p-2 rounded-lg transition-colors duration-300 ${
+                  isDark ? 'bg-amber-500/10' : 'bg-amber-500/20'
+                }`}>
+                  <Sun className={`w-5 h-5 transition-colors duration-300 ${
+                    isDark ? 'text-amber-500' : 'text-amber-600'
+                  }`} />
                 </div>
-                <h4 className="text-xl font-serif text-neutral-200 tracking-wide">Lunch</h4>
+                <h4 className={`text-xl font-serif tracking-wide transition-colors duration-300 ${
+                  isDark ? 'text-neutral-200' : 'text-gray-900'
+                }`}>Lunch</h4>
               </div>
               <div className="space-y-5">
                 {loading ? (
-                  <p className="text-neutral-500 text-xs">Loading lunch items...</p>
+                  <p className={`text-xs transition-colors duration-300 ${
+                    isDark ? 'text-neutral-500' : 'text-gray-600'
+                  }`}>Loading lunch items...</p>
                 ) : lunchItems.length > 0 ? (
                   lunchItems.map((item) => (
-                    <MenuItemRow key={item.documentId} item={item} format={format} addItem={addItem} />
+                    <MenuItemRow key={item.documentId} item={item} format={format} addItem={addItem} isDark={isDark} />
                   ))
                 ) : (
-                  <p className="text-neutral-500 text-xs">No lunch items available</p>
+                  <p className={`text-xs transition-colors duration-300 ${
+                    isDark ? 'text-neutral-500' : 'text-gray-600'
+                  }`}>No lunch items available</p>
                 )}
               </div>
             </div>
