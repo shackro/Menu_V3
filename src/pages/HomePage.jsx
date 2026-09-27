@@ -10,6 +10,7 @@ import { fetchMenuItems, getCmsImageUrl } from '@/api/cms';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useCartStore } from '@/store/useCart';
 import FloatingCart from '@/components/cart/FloatingCart';
+import HeroSection from '@/components/sections/HeroSection';
 
 const CATEGORIES = [
   { id: "breakfast", name: "Breakfast", icon: Utensils, sort_order: 1 },
@@ -81,6 +82,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-50 font-sans selection:bg-amber-500 selection:text-black antialiased overflow-x-hidden">
+
+      {/* HERO SECTION - Full screen animated hero with threads and chef profile */}
+      <HeroSection />
 
       {/* 1. FLOATING HOUSE IDENTIFIER NOTIFICATION TOAST */}
       <AnimatePresence>

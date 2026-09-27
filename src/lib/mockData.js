@@ -1,5 +1,9 @@
-// src/lib/mockData.js
-// 60 Items | 120 Images (2 views per item) | Full Hotel Service Coverage
+// ============================================================================
+// src/lib/mockData.js - Static Mock Data
+// ============================================================================
+// Direct data exports - NO function calls
+// Components import data directly as constants
+// ============================================================================
 
 const RESTAURANT_ID = "47da0aad-679c-48b4-91e7-ef38d92c8ad0";
 
@@ -73,9 +77,7 @@ const IMG = {
   cocktail: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=80',
 };
 
-export function getMenuItems() { return Promise.resolve(menuItems); }
-export function getMenuItemByDocId(documentId) { return Promise.resolve(menuItems.find(i => i.documentId === documentId) || null); }
-
+// Direct data exports - NO functions
 export const categories = [
   { id: 1, documentId: genId('cat', 1), name: "Breakfast", icon_emoji: "🍳", sort_order: 1, restaurant_id: RESTAURANT_ID },
   { id: 2, documentId: genId('cat', 2), name: "Lunch", icon_emoji: "☀️", sort_order: 2, restaurant_id: RESTAURANT_ID },
@@ -256,52 +258,18 @@ export const menuItems = [
     ]
   })),
   // BREAKFAST
-  { id: 101, documentId: genId('item', 101), name: "Kenyan Tea & Mandazi", description: "Freshly brewed chai with cardamom, served with 3 warm, fluffy mandazi.", price: 250, is_available: true, status_badge: "best_seller", spice_level: null, is_halal: true, is_vegetarian: true, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 1), name: "Breakfast" }, inclusions: [{ label: "Refill on Tea" }], suggested_addons: [], image: IMG.tea },
-  { id: 102, documentId: genId('item', 102), name: "Full Kenyan Breakfast", description: "Two eggs, beef sausages, toast, grilled tomatoes, and a side of fresh fruit.", price: 650, is_available: true, status_badge: null, spice_level: null, is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 1), name: "Breakfast" }, inclusions: [{ label: "Fresh Juice" }], suggested_addons: [], image: IMG.nyama },
-  
+  { id: 101, documentId: genId('item', 101), name: "Kenyan Tea & Mandazi", description: "Freshly brewed chai with cardamom, served with 3 warm, fluffy mandazi.", price: 250, is_available: true, status_badge: "best_seller", spice_level: null, is_halal: true, is_vegetarian: true, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 1), name: "Breakfast" }, inclusions: [{ label: "Refill on Tea" }], suggested_addons: [], images: [{ url: IMG.tea, label: 'Main View' }, { url: IMG.breakfast[1], label: 'Detail' }] },
+  { id: 102, documentId: genId('item', 102), name: "Full Kenyan Breakfast", description: "Two eggs, beef sausages, toast, grilled tomatoes, and a side of fresh fruit.", price: 650, is_available: true, status_badge: null, spice_level: null, is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 1), name: "Breakfast" }, inclusions: [{ label: "Fresh Juice" }], suggested_addons: [], images: [{ url: IMG.nyama, label: 'Main View' }, { url: IMG.breakfast[0], label: 'Detail' }] },
+
   // LUNCH
-  { id: 201, documentId: genId('item', 201), name: "Beef Pilau", description: "Aromatic basmati rice cooked in rich beef broth with traditional Swahili spices.", price: 600, is_available: true, status_badge: "best_seller", spice_level: "mild", is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 2), name: "Lunch" }, inclusions: [{ label: "Kachumbari Salad" }], suggested_addons: [], image: IMG.pilau },
-  { id: 202, documentId: genId('item', 202), name: "Chapati & Sukuma Wiki", description: "Two soft, layered chapatis served with sautéed collard greens and beef stew.", price: 450, is_available: true, status_badge: null, spice_level: null, is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 2), name: "Lunch" }, inclusions: [{ label: "Extra Gravy" }], suggested_addons: [], image: IMG.chapati },
-  
+  { id: 201, documentId: genId('item', 201), name: "Beef Pilau", description: "Aromatic basmati rice cooked in rich beef broth with traditional Swahili spices.", price: 600, is_available: true, status_badge: "best_seller", spice_level: "mild", is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 2), name: "Lunch" }, inclusions: [{ label: "Kachumbari Salad" }], suggested_addons: [], images: [{ url: IMG.pilau, label: 'Main View' }, { url: IMG.pasta[1], label: 'Detail' }] },
+  { id: 202, documentId: genId('item', 202), name: "Chapati & Sukuma Wiki", description: "Two soft, layered chapatis served with sautéed collard greens and beef stew.", price: 450, is_available: true, status_badge: null, spice_level: null, is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 2), name: "Lunch" }, inclusions: [{ label: "Extra Gravy" }], suggested_addons: [], images: [{ url: IMG.chapati, label: 'Main View' }, { url: IMG.pasta[0], label: 'Detail' }] },
+
   // DINNER
-  { id: 301, documentId: genId('item', 301), name: "Nyama Choma Platter", description: "500g of premium grilled goat meat, tender and juicy, served with ugali and kachumbari.", price: 1800, is_available: true, status_badge: "chefs_choice", spice_level: null, is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 3), name: "Dinner" }, inclusions: [{ label: "Ugali" }, { label: "Kachumbari" }], suggested_addons: [], image: IMG.nyama },
-  { id: 302, documentId: genId('item', 302), name: "Wet Fry Tilapia", description: "Whole Lake Victoria tilapia pan-fried in rich tomato, onion, and dhania gravy.", price: 1200, is_available: true, status_badge: null, spice_level: "medium", is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 3), name: "Dinner" }, inclusions: [{ label: "Ugali or Rice" }], suggested_addons: [], image: IMG.fish },
+  { id: 301, documentId: genId('item', 301), name: "Nyama Choma Platter", description: "500g of premium grilled goat meat, tender and juicy, served with ugali and kachumbari.", price: 1800, is_available: true, status_badge: "chefs_choice", spice_level: null, is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 3), name: "Dinner" }, inclusions: [{ label: "Ugali" }, { label: "Kachumbari" }], suggested_addons: [], images: [{ url: IMG.nyama, label: 'Main View' }, { url: IMG.steak[1], label: 'Detail' }] },
+  { id: 302, documentId: genId('item', 302), name: "Wet Fry Tilapia", description: "Whole Lake Victoria tilapia pan-fried in rich tomato, onion, and dhania gravy.", price: 1200, is_available: true, status_badge: null, spice_level: "medium", is_halal: true, is_vegetarian: false, is_vegan: false, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 3), name: "Dinner" }, inclusions: [{ label: "Ugali or Rice" }], suggested_addons: [], images: [{ url: IMG.fish, label: 'Main View' }, { url: IMG.seafood[1], label: 'Detail' }] },
 
   // DRINKS
-  { id: 401, documentId: genId('item', 401), name: "Fresh Passion Juice", description: "100% pure, freshly squeezed Kenyan passion fruit.", price: 300, is_available: true, status_badge: null, spice_level: null, is_halal: true, is_vegetarian: true, is_vegan: true, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 4), name: "Drinks & Bar" }, inclusions: [], suggested_addons: [], image: IMG.cocktail },
-  { id: 402, documentId: genId('item', 402), name: "Tusker Lager", description: "Kenya's favorite premium lager beer, served ice cold.", price: 350, is_available: true, status_badge: "best_seller", spice_level: null, is_halal: false, is_vegetarian: true, is_vegan: true, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 4), name: "Drinks & Bar" }, inclusions: [], suggested_addons: [], image: IMG.cocktail },
+  { id: 401, documentId: genId('item', 401), name: "Fresh Passion Juice", description: "100% pure, freshly squeezed Kenyan passion fruit.", price: 300, is_available: true, status_badge: null, spice_level: null, is_halal: true, is_vegetarian: true, is_vegan: true, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 4), name: "Drinks & Bar" }, inclusions: [], suggested_addons: [], images: [{ url: IMG.cocktail[0], label: 'Main View' }, { url: IMG.cocktail[1], label: 'Detail' }] },
+  { id: 402, documentId: genId('item', 402), name: "Tusker Lager", description: "Kenya's favorite premium lager beer, served ice cold.", price: 350, is_available: true, status_badge: "best_seller", spice_level: null, is_halal: false, is_vegetarian: true, is_vegan: true, restaurant_id: RESTAURANT_ID, category: { documentId: genId('cat', 4), name: "Drinks & Bar" }, inclusions: [], suggested_addons: [], images: [{ url: IMG.cocktail[1], label: 'Main View' }, { url: IMG.cocktail[0], label: 'Detail' }] },
 ];
-
-// Export helper functions matching your API layer
-export function getCategories() {
-  return Promise.resolve(categories);
-}
-
-
-/**
- * Mock Image Resolver
- * Handles the new 'images' array structure for multi-POV galleries
- */
-export function getCmsImageUrl(imageData, size = 'medium') {
-  // If it's an array (our mock multi-view structure), return the first URL
-  if (Array.isArray(imageData)) {
-    return imageData[0]?.url || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80';
-  }
-  
-  // If it's a single object (standard CMS structure)
-  if (imageData?.url) return imageData.url;
-  if (imageData?.data?.attributes?.url) return imageData.data.attributes.url;
-  
-  // Fallback
-  return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80';
-}
-
-/**
- * Get all images for a dish (for the gallery)
- */
-export function getDishImages(imageData) {
-  if (Array.isArray(imageData)) return imageData;
-  if (imageData?.url) return [{ url: imageData.url, label: 'Main View' }];
-  if (imageData?.data?.attributes?.url) return [{ url: imageData.data.attributes.url, label: 'Main View' }];
-  return [{ url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80', label: 'Default' }];
-}

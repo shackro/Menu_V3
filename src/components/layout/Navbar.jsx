@@ -4,49 +4,20 @@ import { ShoppingBag, Sun, Moon, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/store/useCart';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Navbar() {
   const location = useLocation();
   const totalItems = useCartStore((state) => state.items.reduce((acc, item) => acc + item.quantity, 0));
   const isHome = location.pathname === '/';
-  
+
   // Currency State
   const { currency, setCurrency } = useCurrency();
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const currencyRef = useRef(null);
 
-  // Theme State
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
-
-  // Toggle theme function
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
-
-  // Sync theme with localStorage/system on mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      setIsDark(savedTheme === 'dark');
-      if (savedTheme === 'dark') document.documentElement.classList.add('dark');
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
+  // Theme State - from shared context
+  const { isDark, toggleTheme } = useTheme();
 
   // Close currency dropdown when clicking outside
   useEffect(() => {
@@ -67,29 +38,23 @@ export default function Navbar() {
   ];
 
   // Dynamic classes that adapt to theme
-const glassBg = isHome
-    ? 'bg-transparent'
-    : `backdrop-blur-xl ${
-        isDark 
-          ? 'bg-[#121212]/80 border-gray-800/50' 
-          : 'bg-white/80 border-gray-200/50'
-      }`;
+const glassBg = `backdrop-blur-xl ${
+    isDark
+      ? 'bg-[#121212]/95 border-gray-700/50'
+      : 'bg-white/95 border-gray-200/50'
+  }`;
 
-const textClass = isHome 
-    ? 'text-dark group-hover:text-primary' 
-    : `${
-        isDark 
-          ? 'text-white group-hover:text-primary' 
-          : 'text-gray-900 group-hover:text-primary'
-      }`;
-    
-const iconBtnClass = isHome 
-    ? 'text-dark hover:bg-dark/10' 
-    : `${
-        isDark 
-          ? 'text-white hover:bg-white/10' 
-          : 'text-gray-900 hover:bg-gray-100'
-      }`;
+const textClass = `${
+    isDark
+      ? 'text-white group-hover:text-primary'
+      : 'text-gray-900 group-hover:text-primary'
+  }`;
+
+const iconBtnClass = `${
+    isDark
+      ? 'text-white hover:bg-white/10'
+      : 'text-gray-900 hover:bg-gray-100'
+  }`;
       
   return (
     <motion.nav 

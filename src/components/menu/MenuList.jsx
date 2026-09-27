@@ -14,7 +14,7 @@ function MenuListItem({ item, format, onQuickAdd }) {
   const imageData = item.images ? item.images : item.image;
 
   return (
-    <div className="flex items-start gap-3 py-3 border-b border-dotted border-[rgba(219,165,60,0.35)] last:border-0">
+    <div className="flex items-start gap-3 py-3  border-b border-dotted border-[rgba(219,165,60,0.35)] last:border-0">
       {/* Tiny Picture: 32x32px */}
       {imageData && (
         <div className="flex-shrink-0 w-8 h-8 rounded overflow-hidden bg-[#1c1c1c] border border-[rgba(219,165,60,0.2)]">
@@ -114,7 +114,7 @@ export default function MenuList() {
       dishId: item.documentId || item.id,
       name: item.name,
       price: item.price,
-      image: item.image ? getCmsImageUrl(item.image, 'thumbnail') : undefined,
+      image: item.images ? getCmsImageUrl(item.images, 'thumbnail') : undefined,
       quantity: 1,
       spiceLevel: item.spice_level ? item.spice_level.charAt(0).toUpperCase() + item.spice_level.slice(1) : 'Mild',
       specialInstructions: '',
@@ -169,10 +169,10 @@ export default function MenuList() {
               </svg>
             </div>
             <div className="hidden md:block">
-              {items.breakfast[0]?.image && (
-                <img 
-                  src={getCmsImageUrl(items.breakfast[0].image, 'medium')} 
-                  alt="Chef's signature plate" 
+              {items.breakfast[0]?.images && (
+                <img
+                  src={getCmsImageUrl(items.breakfast[0].images, 'medium')}
+                  alt="Chef's signature plate"
                   className="w-[230px] aspect-[4/3] object-cover rounded-lg border border-[rgba(219,165,60,0.2)] shadow-lg"
                 />
               )}

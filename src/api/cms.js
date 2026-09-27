@@ -1,106 +1,132 @@
-// src/api/cms.js
+// ============================================================================
+// src/api/cms.js - CMS API Integration
+// ============================================================================
+// 🎯 CURRENT MODE: Static Mock Data Only
+// ✅ Compatibility functions that return mock data (no real API calls)
+// ✅ Components can use same imports and function calls as before
+// ✅ But now it's all local static data - zero backend dependency
+// ============================================================================
 
-import { 
-  getCategories as getMockCategories, 
-  getMenuItems as getMockMenuItems, 
-  getMenuItemByDocId as getMockMenuItem,
-  getCmsImageUrl as getMockImageUrl 
-} from '@/lib/mockData';
+// 1. Direct import of mock data (static)
+import { categories as categoriesData, menuItems as itemsData } from '@/lib/mockData';
 
-// 🎯 TOGGLE BACKEND HERE:
-// Set to `true` to use the 60-item Mock Data (Instant, works perfectly on Vercel).
-// Set to `false` to use the live Strapi CMS (May have Render spin-up delays).
-const USE_MOCK_DATA = true; 
-
-const BASE_URL = 'https://restaurant-menu-cms-s0ac.onrender.com/api';
-const RESTAURANT_ID = '47da0aad-679c-48b4-91e7-ef38d92c8ad0';
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80';
-
-// ==========================================
-// REAL API FUNCTIONS (Live Strapi CMS)
-// ==========================================
-async function fetchRealCategories() {
-  try {
-    const res = await fetch(`${BASE_URL}/categories?filters[restaurant_id][$eq]=${RESTAURANT_ID}&sort=sort_order:asc`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data.data || [];
-  } catch (error) {
-    console.warn('⚠️ Real categories fetch failed, falling back to mock:', error.message);
-    return getMockCategories(); // 🛡️ Auto-fallback prevents crashes
-  }
+// 2. Compatibility functions (components can still call these - they return mock data)
+export async function fetchCategories() {
+  return Promise.resolve(categoriesData);
 }
 
-async function fetchRealMenuItems() {
-  try {
-    const query = new URLSearchParams({
-      'filters[restaurant_id][$eq]': RESTAURANT_ID,
-      'populate': 'category,inclusions,suggested_addons,image'
-    });
-    const res = await fetch(`${BASE_URL}/menu-items?${query}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data.data || [];
-  } catch (error) {
-    console.warn('⚠️ Real menu items fetch failed, falling back to mock:', error.message);
-    return getMockMenuItems(); // 🛡️ Auto-fallback prevents crashes
-  }
+export async function fetchMenuItems() {
+  return Promise.resolve(itemsData);
 }
 
-async function fetchRealMenuItemByDocId(identifier) {
-  try {
-    if (!identifier) return null;
-
-    // 1. Try by documentId first (Strapi v5 / Document ID plugin)
-    const query = new URLSearchParams({
-      'filters[documentId][$eq]': String(identifier),
-      'populate': 'category,inclusions,suggested_addons,image'
-    });
-    let res = await fetch(`${BASE_URL}/menu-items?${query}`);
-    
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    let data = await res.json();
-    let item = data.data?.[0];
-    
-    // 2. Fallback: try numeric ID if documentId fails (Strapi v4 compatibility)
-    if (!item && !isNaN(identifier)) {
-      const fallbackQuery = new URLSearchParams({
-        'filters[id][$eq]': String(identifier),
-        'populate': 'category,inclusions,suggested_addons,image'
-      });
-      const fallbackRes = await fetch(`${BASE_URL}/menu-items?${fallbackQuery}`);
-      if (fallbackRes.ok) {
-        const fallbackData = await fallbackRes.json();
-        item = fallbackData.data?.[0];
-      }
-    }
-    
-    return item || null;
-  } catch (error) {
-    console.warn(`⚠️ Real item fetch failed for ${identifier}, falling back to mock:`, error.message);
-    return getMockMenuItem(identifier); // 🛡️ Auto-fallback prevents "Dish not found"
-  }
+export async function fetchMenuItemByDocId(documentId) {
+  const item = itemsData.find(i => i.documentId === documentId);
+  return Promise.resolve(item || null);
 }
 
-function getRealCmsImageUrl(imageData, size = 'medium') {
-  if (!imageData?.data?.attributes) return FALLBACK_IMAGE;
-  const formats = imageData.data.attributes.formats;
-  let url = formats?.[size]?.url || formats?.small?.url || formats?.medium?.url || imageData.data.attributes.url;
-  return url?.startsWith('http') ? url : `${BASE_URL.replace('/api', '')}${url}` || FALLBACK_IMAGE;
+export async function fetchBrandData() {
+  return Promise.resolve(brandData);
 }
 
-// ==========================================
-// EXPORTS (Environment & Fallback Aware)
-// ==========================================
+// Also export as direct constants
+export { categoriesData as categories, itemsData as menuItems };
 
-export const fetchCategories = USE_MOCK_DATA ? getMockCategories : fetchRealCategories;
-export const fetchMenuItems = USE_MOCK_DATA ? getMockMenuItems : fetchRealMenuItems;
-export const fetchMenuItemByDocId = USE_MOCK_DATA ? getMockMenuItem : fetchRealMenuItemByDocId;
-
+// 3. Image URL resolver (handles both mock data arrays and CMS single images)
 export function getCmsImageUrl(imageData, size = 'medium') {
-  // The mock resolver is smart enough to handle both mock structures AND real CMS structures
-  const mockUrl = getMockImageUrl(imageData, size);
-  if (mockUrl !== FALLBACK_IMAGE) return mockUrl;
-  
-  return USE_MOCK_DATA ? mockUrl : getRealCmsImageUrl(imageData, size);
+  if (!imageData) return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80';
+  // Handle mock data: array of { url, label } objects
+  if (Array.isArray(imageData)) {
+    return imageData[0]?.url || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80';
+  }
+  // Handle CMS data: direct URL string or object with url property
+  return imageData?.url || imageData || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80';
 }
+
+// 4. Get multiple dish images
+export function getDishImages(imageArray = []) {
+  return imageArray || [];
+}
+
+// ============================================================================
+// 🏢 BRAND & ABOUT PAGE DATA (Static Mock Data)
+// ============================================================================
+
+export const brandData = {
+  about: {
+    heroImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
+    title: 'Our Heritage',
+    subtitle: 'A decade of culinary excellence in the heart of Nairobi',
+    stats: [
+      { value: '10+', label: 'Years of Excellence' },
+      { value: '50k+', label: 'Happy Guests' },
+      { value: '4.9', label: 'Google Rating' }
+    ],
+    story: [
+      'Founded in 2014 in the heart of Westlands, Savanna Grill was born from a simple belief: that authentic Kenyan cuisine deserves a modern, elegant setting.',
+      'We source our ingredients from local farmers across Kenya, ensuring every dish tells the story of our land. From our signature Nyama Choma to our carefully crafted cocktails, everything is made with passion and pride.'
+    ],
+    mission: 'To celebrate Kenyan culinary heritage through innovative cuisine, exceptional service, and a warm, welcoming atmosphere that feels like home.',
+    values: [
+      { title: 'Sustainability', desc: 'We partner with local farmers and use eco-friendly practices.', icon: 'Leaf' },
+      { title: 'Community', desc: 'We support local artists, musicians, and cultural events.', icon: 'Users' },
+      { title: 'Quality', desc: 'Every dish is crafted with the finest ingredients and care.', icon: 'Award' }
+    ],
+    team: [
+      { name: 'Chef Marcus', role: 'Head Chef', image: 'https://images.unsplash.com/photo-1581299894007-aaa50297cf16?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Grace Wanjiku', role: 'Restaurant Manager', image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=400&q=80' },
+      { name: 'David Ochieng', role: 'Head Bartender', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80' }
+    ],
+    reviews: [
+      { name: 'Sarah M.', rating: 5, text: 'Best Nyama Choma in Nairobi! The ambiance is incredible.', date: '1 week ago' },
+      { name: 'James K.', rating: 5, text: 'Perfect spot for business lunches. Professional service.', date: '2 weeks ago' },
+      { name: 'Amina H.', rating: 4, text: 'Love the authentic Kenyan flavors. Will definitely return!', date: '3 weeks ago' }
+    ]
+  },
+  posts: [
+    {
+      id: 1,
+      image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
+      caption: 'Fresh Nyama Choma straight from the grill 🔥 #SavannaGrill #NyamaChoma #NairobiEats',
+      likes: 247,
+      comments: 18,
+      time: '2 hours ago'
+    },
+    {
+      id: 2,
+      image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=80',
+      caption: 'Friday nights hit different with our signature cocktails 🍸 Book your table now!',
+      likes: 189,
+      comments: 12,
+      time: '1 day ago'
+    },
+    {
+      id: 3,
+      image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80',
+      caption: 'Chef Marcus preparing our famous Pilau recipe passed down through generations 🍚✨',
+      likes: 432,
+      comments: 34,
+      time: '3 days ago'
+    }
+  ],
+  contact: {
+    phone: '+254 703 412 694',
+    email: 'hello@savannagrill.co.ke',
+    whatsapp: '254703412694',
+    socials: {
+      instagram: '#',
+      facebook: '#',
+      twitter: '#'
+    }
+  },
+  directions: {
+    address: 'Sarit Centre, 2nd Floor, Westlands, Nairobi, Kenya',
+    hours: [
+      { days: 'Monday - Friday', time: '8:00 AM - 11:00 PM' },
+      { days: 'Saturday - Sunday', time: '9:00 AM - 12:00 AM' }
+    ],
+    parking: 'Free parking available at Sarit Centre basement. Valet service available on weekends.',
+    mapLink: 'https://maps.google.com/?q=Sarit+Centre+Nairobi'
+  }
+};
+
+console.log('✅ Using Static Mock Data - No Backend API Calls');

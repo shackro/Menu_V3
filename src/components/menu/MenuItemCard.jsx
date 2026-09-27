@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Leaf } from 'lucide-react';
-import { getCmsImageUrl } from '@/lib/mockData';
+import { getCmsImageUrl } from '@/api/cms';
 
 export default function MenuItemCard({ item }) {
-  // ✅ Handle both 'images' array and single 'image' string from mock data
-  const images = item.images || (item.image ? [{ url: typeof item.image === 'string' ? item.image : item.image.url, label: 'Main' }] : []);
-  const hasMultipleImages = images.length > 1;
-  const primaryImage = getCmsImageUrl(images[0]);
+  const gallery = Array.isArray(item.images) ? item.images : [];
+  const imageData = item.image || gallery[0] || null;
+  const hasMultipleImages = gallery.length > 1 || (item.image && gallery.length > 0);
+  const primaryImage = imageData ? getCmsImageUrl(imageData, 'thumbnail') : undefined;
 
   const spiceEmojis = { mild: '🌶️', medium: '🌶️🌶️', hot: '🌶️🌶️🌶️' };
 

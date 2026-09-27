@@ -37,7 +37,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative bg-gradient-to-b from-white to-gray-50 dark:from-dark-card dark:to-dark text-gray-700 dark:text-gray-400 pt-16 pb-8 px-4 border-t border-gray-200 dark:border-gray-800 overflow-hidden">
+    <footer className="relative bg-gradient-to-b bottom-12 from-white to-gray-50 dark:from-dark-card dark:to-dark text-gray-700 dark:text-gray-400 pt-16 pb-8 px-4 border-t border-gray-200 dark:border-gray-800 overflow-hidden">
       
       {/* Decorative Background Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl pointer-events-none" />

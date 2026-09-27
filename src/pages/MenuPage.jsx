@@ -3,8 +3,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
-// Import from your mock data (or switch to @/api/cms when ready)
-import { getMenuItems, getCategories } from '@/lib/mockData';
+import { fetchCategories, fetchMenuItems } from '@/api/cms';
 import MenuItemCard from '@/components/menu/MenuItemCard';
 import CategoryTabs from '@/components/menu/CategoryTabs';
 import Skeleton from '@/components/ui/Skeleton';
@@ -33,11 +32,11 @@ export default function MenuPage() {
     async function loadData() {
       try {
         const [cats, items] = await Promise.all([
-          getCategories(),
-          getMenuItems()
+          fetchCategories(),
+          fetchMenuItems()
         ]);
-        setCategories(cats);
-        setMenuItems(items);
+        setCategories(cats || []);
+        setMenuItems(items || []);
       } catch (error) {
         console.error("Failed to load menu data:", error);
       } finally {

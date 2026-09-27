@@ -17,42 +17,45 @@ import TablePage from './pages/TablePage';
 
 // Context
 import { CurrencyProvider } from './context/CurrencyContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 export default function App() {
   return (
-    <CurrencyProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <div className="min-h-screen bg-gray-50 dark:bg-dark text-gray-900 dark:text-white transition-colors duration-300 font-sans">
-          
-          {/* Clean fade-in animation on mount (No blur/scale effects) */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="min-h-screen flex flex-col"
-          >
-            <Navbar />
-            
-            <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/menu" element={<MenuPage />} />
-                <Route path="/dish/:id" element={<DishPage />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/table/:tableId" element={<TablePage />} />
-              </Routes>
-            </main>
-            
-            <Footer />
-          </motion.div>
-          
-          {/* Global Widgets */}
-          <FloatingCart />
-          <FoodAvatarWidget />
-          {/* <AIChatbotWidget /> */}
-          
-        </div>
-      </Router>
-    </CurrencyProvider>
+    <ThemeProvider>
+      <CurrencyProvider>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <div className="min-h-screen bg-gray-50 dark:bg-dark text-gray-900 dark:text-white transition-colors duration-300 font-sans">
+
+            {/* Clean fade-in animation on mount (No blur/scale effects) */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="min-h-screen flex flex-col"
+            >
+              <Navbar />
+
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/menu" element={<MenuPage />} />
+                  <Route path="/dish/:id" element={<DishPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/table/:tableId" element={<TablePage />} />
+                </Routes>
+              </main>
+
+              <Footer />
+            </motion.div>
+
+            {/* Global Widgets */}
+            <FloatingCart />
+            <FoodAvatarWidget />
+            {/* <AIChatbotWidget /> */}
+
+          </div>
+        </Router>
+      </CurrencyProvider>
+    </ThemeProvider>
   );
 }
