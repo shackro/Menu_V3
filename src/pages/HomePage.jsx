@@ -775,103 +775,128 @@ export default function HomePage() {
       </section>
 
       {/* 6. SOCIAL MEDIA REVIEWS & TOP POSTS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-16 border-t" style={{
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-20 border-t" style={{
         borderColor: isDark ? 'rgb(23 23 23)' : 'rgb(229 231 235)'
       }}>
         <motion.div
           initial="hidden" whileInView="visible" viewport={{ once: true }}
-          className="text-center space-y-2 mb-12"
+          className="text-center space-y-3 mb-16"
         >
-          <span className={`text-[11px] font-black tracking-[0.2em] uppercase transition-colors duration-300 ${
+          <span className={`text-[11px] font-black tracking-[0.2em] uppercase transition-colors duration-300 flex items-center justify-center gap-2 ${
             isDark ? 'text-blue-500' : 'text-blue-600'
-          }`}>What People Are Saying</span>
-          <h2 className={`text-3xl md:text-4xl font-black uppercase tracking-tighter transition-colors duration-300 ${
+          }`}>
+            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+              isDark ? 'bg-blue-500' : 'bg-blue-600'
+            }`} />
+            What People Are Saying
+            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+              isDark ? 'bg-blue-500' : 'bg-blue-600'
+            }`} />
+          </span>
+          <h2 className={`text-4xl md:text-5xl font-black uppercase tracking-tighter transition-colors duration-300 ${
             isDark ? 'text-neutral-100' : 'text-gray-900'
           }`}>Top Social Reviews</h2>
-          <p className={`text-sm transition-colors duration-300 ${
+          <p className={`text-base transition-colors duration-300 ${
             isDark ? 'text-neutral-500' : 'text-gray-600'
           }`}>Real experiences from our community across social platforms</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
           {SOCIAL_REVIEWS.map((review, idx) => (
             <motion.div
               key={review.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.08 }}
-              whileHover={{ y: -6 }}
-              className={`group relative rounded-2xl p-5 transition-all duration-300 border backdrop-blur-sm ${
+              transition={{ delay: idx * 0.1 }}
+              whileHover={{ y: -10, scale: 1.02 }}
+              className={`group relative rounded-2xl p-6 transition-all duration-300 border backdrop-blur-sm overflow-hidden ${
                 isDark
-                  ? 'bg-neutral-900/50 border-neutral-800 hover:border-blue-500/30'
-                  : 'bg-white/50 border-gray-200 hover:border-blue-500/30'
+                  ? 'bg-gradient-to-br from-neutral-900/60 via-neutral-900/40 to-blue-900/20 border-blue-500/20 hover:border-blue-500/50 shadow-lg shadow-blue-900/10'
+                  : 'bg-gradient-to-br from-white/60 via-white/40 to-blue-100/20 border-blue-200/40 hover:border-blue-400/60 shadow-lg shadow-blue-200/20'
               }`}
             >
-              {/* Platform badge */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-3xl">{review.avatar}</span>
-                  <div>
-                    <p className={`text-xs font-bold transition-colors duration-300 ${
-                      isDark ? 'text-neutral-200' : 'text-gray-900'
-                    }`}>{review.author}</p>
-                    <p className={`text-[10px] transition-colors duration-300 ${
-                      isDark ? 'text-neutral-500' : 'text-gray-600'
-                    }`}>{review.handle}</p>
+              {/* Animated background glow */}
+              <div className={`absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${
+                isDark
+                  ? 'bg-gradient-to-r from-blue-600/10 via-transparent to-blue-600/10'
+                  : 'bg-gradient-to-r from-blue-400/10 via-transparent to-blue-400/10'
+              }`} />
+
+              <div className="relative z-10">
+                {/* Header with Avatar & Platform */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="text-4xl p-2 rounded-xl transition-transform duration-300 group-hover:scale-110" style={{
+                      background: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.15)'
+                    }}>
+                      {review.avatar}
+                    </div>
+                    <div>
+                      <p className={`text-xs font-black uppercase tracking-wider transition-colors duration-300 ${
+                        isDark ? 'text-neutral-300' : 'text-gray-800'
+                      }`}>{review.author}</p>
+                      <p className={`text-[10px] transition-colors duration-300 ${
+                        isDark ? 'text-neutral-500' : 'text-gray-600'
+                      }`}>{review.handle}</p>
+                    </div>
+                  </div>
+                  <span className={`text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full transition-all duration-300 ${
+                    isDark
+                      ? 'bg-blue-500/15 text-blue-400 group-hover:bg-blue-500/25'
+                      : 'bg-blue-500/20 text-blue-600 group-hover:bg-blue-500/35'
+                  }`}>
+                    {review.platform}
+                  </span>
+                </div>
+
+                {/* Star Rating */}
+                <div className="flex gap-1.5 mb-4">
+                  {Array.from({ length: review.rating }).map((_, i) => (
+                    <motion.div key={i} whileHover={{ scale: 1.2 }}>
+                      <Star className={`w-4 h-4 fill-yellow-400 transition-colors duration-300 ${
+                        isDark ? 'text-yellow-400' : 'text-yellow-500'
+                      }`} />
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Review Text */}
+                <p className={`text-[13px] leading-relaxed mb-5 font-medium transition-colors duration-300 ${
+                  isDark ? 'text-neutral-300' : 'text-gray-800'
+                }`}>
+                  "{review.text}"
+                </p>
+
+                {/* Engagement Metrics */}
+                <div className={`flex items-center gap-5 pb-5 border-b transition-colors duration-300 ${
+                  isDark ? 'border-neutral-700/50' : 'border-gray-300/50'
+                }`}>
+                  <div className="flex items-center gap-2 text-[11px]">
+                    <Heart className={`w-4 h-4 transition-all duration-300 group-hover:scale-110 ${
+                      isDark ? 'text-red-500/70' : 'text-red-500/70'
+                    }`} />
+                    <span className={`font-bold transition-colors duration-300 ${
+                      isDark ? 'text-neutral-400' : 'text-gray-600'
+                    }`}>{(review.likes / 1000).toFixed(1)}k</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px]">
+                    <MessageSquare className={`w-4 h-4 transition-all duration-300 group-hover:scale-110 ${
+                      isDark ? 'text-blue-500/70' : 'text-blue-500/70'
+                    }`} />
+                    <span className={`font-bold transition-colors duration-300 ${
+                      isDark ? 'text-neutral-400' : 'text-gray-600'
+                    }`}>{review.replies}</span>
                   </div>
                 </div>
-                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full transition-colors duration-300 ${
-                  isDark
-                    ? 'bg-blue-500/10 text-blue-400'
-                    : 'bg-blue-500/20 text-blue-600'
+
+                {/* Timestamp */}
+                <p className={`text-[10px] mt-4 transition-colors duration-300 ${
+                  isDark ? 'text-neutral-600' : 'text-gray-500'
                 }`}>
-                  {review.platform}
-                </span>
+                  Posted {review.timestamp}
+                </p>
               </div>
-
-              {/* Star rating */}
-              <div className="flex gap-1 mb-3">
-                {Array.from({ length: review.rating }).map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                ))}
-              </div>
-
-              {/* Review text */}
-              <p className={`text-[13px] leading-relaxed mb-4 transition-colors duration-300 ${
-                isDark ? 'text-neutral-300' : 'text-gray-800'
-              }`}>
-                "{review.text}"
-              </p>
-
-              {/* Engagement metrics */}
-              <div className={`flex items-center gap-4 pb-4 border-b transition-colors duration-300 ${
-                isDark ? 'border-neutral-800' : 'border-gray-200'
-              }`}>
-                <div className="flex items-center gap-1 text-[10px]">
-                  <Heart className={`w-3.5 h-3.5 transition-colors duration-300 ${
-                    isDark ? 'text-red-500/60' : 'text-red-500/60'
-                  }`} />
-                  <span className={`font-bold transition-colors duration-300 ${
-                    isDark ? 'text-neutral-500' : 'text-gray-600'
-                  }`}>{review.likes.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center gap-1 text-[10px]">
-                  <MessageSquare className={`w-3.5 h-3.5 transition-colors duration-300 ${
-                    isDark ? 'text-blue-500/60' : 'text-blue-500/60'
-                  }`} />
-                  <span className={`font-bold transition-colors duration-300 ${
-                    isDark ? 'text-neutral-500' : 'text-gray-600'
-                  }`}>{review.replies}</span>
-                </div>
-              </div>
-
-              {/* Timestamp */}
-              <p className={`text-[10px] mt-3 transition-colors duration-300 ${
-                isDark ? 'text-neutral-600' : 'text-gray-500'
-              }`}>
-                {review.timestamp}
-              </p>
             </motion.div>
           ))}
         </div>
@@ -881,18 +906,22 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex justify-center mt-12"
+          className="flex justify-center"
         >
-          <a
+          <motion.a
             href="#"
-            className={`px-8 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all duration-300 ${
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            className={`px-10 py-4 rounded-2xl font-bold text-base flex items-center gap-3 transition-all duration-300 shadow-xl ${
               isDark
-                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white shadow-lg shadow-blue-900/30'
-                : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white shadow-lg shadow-blue-500/20'
+                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white shadow-blue-900/40'
+                : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white shadow-blue-400/40'
             }`}
           >
-            <Share2 className="w-4 h-4" /> Follow Our Social Media
-          </a>
+            <Share2 className="w-5 h-5" />
+            <span>Follow Our Social Media</span>
+            <ArrowRight className="w-4 h-4" />
+          </motion.a>
         </motion.div>
       </section>
 

@@ -14,6 +14,7 @@ import MenuPage from './pages/MenuPage';
 import DishPage from './pages/DishPage';
 import CartPage from './pages/CartPage';
 import TablePage from './pages/TablePage';
+import BrandPage from './pages/BrandPage';
 
 // Context
 import { CurrencyProvider } from './context/CurrencyContext';
@@ -38,6 +39,7 @@ export default function App() {
               <main className="flex-grow">
                 <Routes>
                   <Route path="/" element={<HomePage />} />
+                  <Route path="/brand" element={<BrandPage />} />
                   <Route path="/menu" element={<MenuPage />} />
                   <Route path="/dish/:id" element={<DishPage />} />
                   <Route path="/cart" element={<CartPage />} />
