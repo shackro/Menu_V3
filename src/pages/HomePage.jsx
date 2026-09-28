@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import {
   Utensils, Sun, Moon, Cake, Martini, Coffee, Flower, BedDouble,
   ConciergeBell, X, MessageCircle, RefreshCw, ShoppingBag,
-  ArrowRight, Star, CheckCircle2, Server, Cloud, ShieldCheck
+  ArrowRight, Star, CheckCircle2, Server, Cloud, ShieldCheck,
+  Heart, Share2, MessageSquare
 } from 'lucide-react';
 import { fetchMenuItems, getCmsImageUrl } from '@/api/cms';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -22,6 +23,69 @@ const CATEGORIES = [
   { id: "spa", name: "Spa & Wellness", icon: Flower, sort_order: 7 },
   { id: "room-service", name: "Room Service", icon: BedDouble, sort_order: 8 },
   { id: "concierge", name: "Concierge & Events", icon: ConciergeBell, sort_order: 9 }
+];
+
+const SOCIAL_REVIEWS = [
+  {
+    id: 1,
+    author: "Developer",
+    handle: "@techNinja254",
+    avatar: "👨‍💻",
+    platform: "Twitter",
+    text: "Just spent 4 hours working from Savanna Grill ☕ Best secure WiFi in Nairobi and the ugali is perfect for long coding sessions. This is now my official office!",
+    likes: 1203,
+    replies: 45,
+    timestamp: "2h ago",
+    rating: 5
+  },
+  {
+    id: 2,
+    author: "Business Professional",
+    handle: "@EntrepreneurKE",
+    avatar: "👨‍💼",
+    platform: "LinkedIn",
+    text: "Hosted my quarterly team meeting at Savanna Grill. Professional atmosphere, amazing Nyama Choma platter, and their concierge service handled everything perfectly. Highly recommended for business lunches!",
+    likes: 856,
+    replies: 32,
+    timestamp: "1d ago",
+    rating: 5
+  },
+  {
+    id: 3,
+    author: "Food Blogger",
+    handle: "@TasteOfKenya",
+    avatar: "👩‍🍳",
+    platform: "Instagram",
+    text: "The authentic flavors at Savanna Grill are unmatched! Every dish tells a story of Kenyan cuisine perfection. Their Chapati & Sukuma Wiki combo is an absolute must-try. Modern restaurant with traditional soul.",
+    likes: 2451,
+    replies: 127,
+    timestamp: "3d ago",
+    rating: 5
+  },
+  {
+    id: 4,
+    author: "Student",
+    handle: "@UnivLife_Nai",
+    avatar: "👩‍🎓",
+    platform: "TikTok",
+    text: "Found my new study spot! Savanna Grill has affordable menu items, amazing ambiance, and they don't rush you out. Plus the coffee is 🔥 Perfect for exam prep season. 10/10 would recommend to broke students!",
+    likes: 3842,
+    replies: 289,
+    timestamp: "5d ago",
+    rating: 5
+  },
+  {
+    id: 5,
+    author: "Family Dad",
+    handle: "@FamilyFirst_KE",
+    avatar: "👨‍👩‍👧‍👦",
+    platform: "Facebook",
+    text: "Took the whole family to Savanna Grill for Sunday lunch. The kids loved the fresh juice bar, my wife enjoyed the spa services, and I got my perfect Grilled Tilapia. Everyone left happy. Great family-friendly restaurant!",
+    likes: 645,
+    replies: 78,
+    timestamp: "1w ago",
+    rating: 5
+  }
 ];
 
 export default function HomePage() {
@@ -708,6 +772,128 @@ export default function HomePage() {
             <p className="text-neutral-500">No best sellers available</p>
           )}
         </div>
+      </section>
+
+      {/* 6. SOCIAL MEDIA REVIEWS & TOP POSTS SECTION */}
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-16 border-t" style={{
+        borderColor: isDark ? 'rgb(23 23 23)' : 'rgb(229 231 235)'
+      }}>
+        <motion.div
+          initial="hidden" whileInView="visible" viewport={{ once: true }}
+          className="text-center space-y-2 mb-12"
+        >
+          <span className={`text-[11px] font-black tracking-[0.2em] uppercase transition-colors duration-300 ${
+            isDark ? 'text-blue-500' : 'text-blue-600'
+          }`}>What People Are Saying</span>
+          <h2 className={`text-3xl md:text-4xl font-black uppercase tracking-tighter transition-colors duration-300 ${
+            isDark ? 'text-neutral-100' : 'text-gray-900'
+          }`}>Top Social Reviews</h2>
+          <p className={`text-sm transition-colors duration-300 ${
+            isDark ? 'text-neutral-500' : 'text-gray-600'
+          }`}>Real experiences from our community across social platforms</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {SOCIAL_REVIEWS.map((review, idx) => (
+            <motion.div
+              key={review.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.08 }}
+              whileHover={{ y: -6 }}
+              className={`group relative rounded-2xl p-5 transition-all duration-300 border backdrop-blur-sm ${
+                isDark
+                  ? 'bg-neutral-900/50 border-neutral-800 hover:border-blue-500/30'
+                  : 'bg-white/50 border-gray-200 hover:border-blue-500/30'
+              }`}
+            >
+              {/* Platform badge */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl">{review.avatar}</span>
+                  <div>
+                    <p className={`text-xs font-bold transition-colors duration-300 ${
+                      isDark ? 'text-neutral-200' : 'text-gray-900'
+                    }`}>{review.author}</p>
+                    <p className={`text-[10px] transition-colors duration-300 ${
+                      isDark ? 'text-neutral-500' : 'text-gray-600'
+                    }`}>{review.handle}</p>
+                  </div>
+                </div>
+                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full transition-colors duration-300 ${
+                  isDark
+                    ? 'bg-blue-500/10 text-blue-400'
+                    : 'bg-blue-500/20 text-blue-600'
+                }`}>
+                  {review.platform}
+                </span>
+              </div>
+
+              {/* Star rating */}
+              <div className="flex gap-1 mb-3">
+                {Array.from({ length: review.rating }).map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                ))}
+              </div>
+
+              {/* Review text */}
+              <p className={`text-[13px] leading-relaxed mb-4 transition-colors duration-300 ${
+                isDark ? 'text-neutral-300' : 'text-gray-800'
+              }`}>
+                "{review.text}"
+              </p>
+
+              {/* Engagement metrics */}
+              <div className={`flex items-center gap-4 pb-4 border-b transition-colors duration-300 ${
+                isDark ? 'border-neutral-800' : 'border-gray-200'
+              }`}>
+                <div className="flex items-center gap-1 text-[10px]">
+                  <Heart className={`w-3.5 h-3.5 transition-colors duration-300 ${
+                    isDark ? 'text-red-500/60' : 'text-red-500/60'
+                  }`} />
+                  <span className={`font-bold transition-colors duration-300 ${
+                    isDark ? 'text-neutral-500' : 'text-gray-600'
+                  }`}>{review.likes.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center gap-1 text-[10px]">
+                  <MessageSquare className={`w-3.5 h-3.5 transition-colors duration-300 ${
+                    isDark ? 'text-blue-500/60' : 'text-blue-500/60'
+                  }`} />
+                  <span className={`font-bold transition-colors duration-300 ${
+                    isDark ? 'text-neutral-500' : 'text-gray-600'
+                  }`}>{review.replies}</span>
+                </div>
+              </div>
+
+              {/* Timestamp */}
+              <p className={`text-[10px] mt-3 transition-colors duration-300 ${
+                isDark ? 'text-neutral-600' : 'text-gray-500'
+              }`}>
+                {review.timestamp}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex justify-center mt-12"
+        >
+          <a
+            href="#"
+            className={`px-8 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all duration-300 ${
+              isDark
+                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white shadow-lg shadow-blue-900/30'
+                : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white shadow-lg shadow-blue-500/20'
+            }`}
+          >
+            <Share2 className="w-4 h-4" /> Follow Our Social Media
+          </a>
+        </motion.div>
       </section>
 
       {/* 5. SYSTEMS AUTOMATION DETAILED FOOTER */}
