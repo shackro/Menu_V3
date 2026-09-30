@@ -70,7 +70,7 @@ export default function BrandHub() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark pt-20 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark pt-20 pb-28">
       
       {/* Scrollable Content Area */}
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -88,8 +88,8 @@ export default function BrandHub() {
       </div>
 
       {/* Sticky Bottom Navigation for Brand Page */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-dark-card/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800">
-        <div className="max-w-4xl mx-auto flex overflow-x-auto scrollbar-hide">
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-gray-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl dark:border-gray-800 dark:bg-dark-card/95">
+        <div className="mx-auto grid max-w-4xl grid-cols-4">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -98,14 +98,14 @@ export default function BrandHub() {
                 key={tab.id}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 min-w-[100px] px-4 py-4 text-sm font-semibold capitalize whitespace-nowrap border-t-2 transition-colors flex flex-col items-center justify-center gap-1 ${
+                className={`min-w-0 px-1 py-3 text-sm font-semibold capitalize border-t-2 transition-colors flex flex-col items-center justify-center gap-1 sm:px-3 sm:py-4 ${
                   isActive 
                     ? 'border-t-primary text-primary' 
                     : 'border-t-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
-                <Icon className="w-5 h-5" />
-                <span className="text-[10px]">{tab.label}</span>
+                <Icon className="h-5 w-5 shrink-0" />
+                <span className="text-center text-[9px] leading-tight sm:text-[10px]">{tab.label}</span>
               </motion.button>
             );
           })}

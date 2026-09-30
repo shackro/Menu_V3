@@ -5,7 +5,7 @@ import {
   Utensils, Sun, Moon, Cake, Martini, Coffee, Flower, BedDouble,
   ConciergeBell, X, MessageCircle, RefreshCw, ShoppingBag,
   ArrowRight, Star, CheckCircle2, Server, Cloud, ShieldCheck,
-  Heart, Share2, MessageSquare
+  Share2, Quote, Camera, Send, Instagram, Twitter, ExternalLink
 } from 'lucide-react';
 import { fetchMenuItems, getCmsImageUrl } from '@/api/cms';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -88,6 +88,33 @@ const SOCIAL_REVIEWS = [
   }
 ];
 
+const COMMUNITY_PREVIEW_REVIEWS = [
+  {
+    id: 1,
+    name: 'Sarah M.',
+    rating: 5,
+    comment: 'The Choma Feast Board is absolutely unreal! Chef Marcus really outdid himself. The ambiance is perfect for a Friday night.',
+    dish: 'Choma Feast Board',
+    socials: { instagram: 'sarah.eats.nbi', twitter: null }
+  },
+  {
+    id: 2,
+    name: 'James K.',
+    rating: 5,
+    comment: 'Best Nyama in Nairobi, hands down. The service was incredibly fast and the M-Pesa integration was seamless.',
+    dish: 'Nyama Platter',
+    socials: { instagram: null, twitter: 'jamesk_foodie' }
+  },
+  {
+    id: 3,
+    name: 'Amina H.',
+    rating: 4,
+    comment: 'Loved the Belgian Waffles! A bit busy on Sunday morning but totally worth the wait. Will definitely be back.',
+    dish: 'Belgian Waffles',
+    socials: { instagram: 'amina.h', twitter: 'amina_h' }
+  }
+];
+
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("breakfast");
   const [whatsappToast, setWhatsappToast] = useState(() => {
@@ -99,9 +126,19 @@ export default function HomePage() {
     return true;
   });
   const [showWhatsappModal, setShowWhatsappModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showStoryModal, setShowStoryModal] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [whatsappSubmitted, setWhatsappSubmitted] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [hoverReviewRating, setHoverReviewRating] = useState(0);
+  const [reviewInstagram, setReviewInstagram] = useState('');
+  const [reviewTwitter, setReviewTwitter] = useState('');
+  const [storyCaption, setStoryCaption] = useState('');
+  const [storyHandle, setStoryHandle] = useState('');
+  const [storyTwitter, setStoryTwitter] = useState('');
+  const [storyName, setStoryName] = useState('');
   const [loading, setLoading] = useState(true);
   const [breakfastPage, setBreakfastPage] = useState(1);
   const [lunchPage, setLunchPage] = useState(1);
@@ -200,10 +237,10 @@ export default function HomePage() {
   };
 
   return (
-    <div className={`min-h-screen font-sans selection:bg-amber-500 antialiased overflow-x-hidden transition-colors duration-500 ${
+    <div className={`min-h-screen font-sans selection:bg-amber-500 antialiased overflow-x-hidden transition-colors duration-300 ${
       isDark
-        ? 'bg-neutral-950 text-neutral-50 selection:text-black'
-        : 'bg-gray-50 text-gray-900 selection:text-white'
+        ? 'bg-neutral-950 text-neutral-50 selection:text-white'
+        : 'bg-stone-50 text-stone-900 selection:text-white'
     }`}>
 
       {/* HERO SECTION - Full screen animated hero with threads and chef profile */}
@@ -219,19 +256,19 @@ export default function HomePage() {
             className={`fixed top-24 right-4 z-50 max-w-xs w-full backdrop-blur-md p-4 rounded-xl shadow-2xl flex flex-col gap-3 border transition-all duration-300 ${
               isDark
                 ? 'bg-neutral-900/95 border-neutral-800'
-                : 'bg-gray-100/95 border-gray-200'
+                : 'bg-white border-stone-200 shadow-xl'
             }`}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg transition-colors duration-300 ${
-                  isDark ? 'bg-red-500/10' : 'bg-red-500/20'
+                  isDark ? 'bg-red-500/10' : 'bg-red-50'
                 }`}>
                   <span className="text-xl">🍽️</span>
                 </div>
                 <div>
                   <h4 className={`text-[10px] font-black uppercase tracking-wider transition-colors duration-300 ${
-                    isDark ? 'text-neutral-500' : 'text-gray-600'
+                    isDark ? 'text-neutral-500' : 'text-stone-500'
                   }`}>Welcome to:</h4>
                   <p className={`text-sm font-extrabold transition-colors duration-300 ${
                     isDark ? 'text-amber-400' : 'text-amber-600'
@@ -243,7 +280,7 @@ export default function HomePage() {
                 className={`p-1 transition-colors duration-300 ${
                   isDark
                     ? 'text-neutral-500 hover:text-neutral-300'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-stone-400 hover:text-stone-600'
                 }`}
               >
                 <X className="w-4 h-4" />
@@ -261,7 +298,7 @@ export default function HomePage() {
             <button className={`text-[10px] flex items-center justify-center gap-1 mt-[-4px] transition-colors duration-300 ${
               isDark
                 ? 'text-neutral-500 hover:text-neutral-300'
-                : 'text-gray-600 hover:text-gray-900'
+                : 'text-stone-500 hover:text-stone-700'
             }`}
             onClick={() => {
               setWhatsappToast(false);
@@ -400,7 +437,7 @@ export default function HomePage() {
             isDark ? 'text-amber-500' : 'text-amber-600'
           }`}>Discover the Flow</span>
           <h2 className={`text-xl md:text-2xl font-black uppercase tracking-tight transition-colors duration-300 ${
-            isDark ? 'text-neutral-200' : 'text-gray-900'
+            isDark ? 'text-neutral-200' : 'text-stone-900'
           }`}>Browse Categories</h2>
         </motion.div>
 
@@ -423,20 +460,20 @@ export default function HomePage() {
                   isActive
                     ? isDark
                       ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/5'
-                      : 'bg-amber-500/20 border-amber-500/60 text-amber-700 shadow-lg shadow-amber-500/10'
+                      : 'bg-amber-50 border-amber-500/50 text-amber-700 shadow-md shadow-amber-500/10'
                     : isDark
                       ? 'bg-neutral-900/40 border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
-                      : 'bg-gray-100/60 border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900'
+                      : 'bg-white border-stone-200 text-stone-600 hover:border-stone-300 hover:text-stone-900'
                 }`}
               >
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all duration-300 ${
                   isActive
                     ? isDark
                       ? 'bg-amber-500 text-black'
-                      : 'bg-amber-600 text-white'
+                      : 'bg-amber-500 text-white'
                     : isDark
                       ? 'bg-neutral-800 group-hover:bg-neutral-700'
-                      : 'bg-gray-300 group-hover:bg-gray-400'
+                      : 'bg-stone-100 group-hover:bg-stone-200'
                 }`}>
                   <Icon className="w-5 h-5" />
                 </div>
@@ -445,10 +482,10 @@ export default function HomePage() {
                   isActive
                     ? isDark
                       ? 'text-amber-500/80'
-                      : 'text-amber-600/80'
+                      : 'text-amber-600'
                     : isDark
                       ? 'text-neutral-600'
-                      : 'text-gray-500'
+                      : 'text-stone-400'
                 }`}>
                   12+ items
                 </span>
@@ -699,6 +736,351 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-12 border-t text-center" style={{
+        borderColor: isDark ? 'rgb(23 23 23)' : 'rgb(229 231 235)'
+      }}>
+        <p className={`mb-4 text-sm ${isDark ? 'text-neutral-400' : 'text-stone-600'}`}>
+          Guest reviews and stories from the Savanna Grill community.
+        </p>
+        <Link
+          to="/brand?tab=posts"
+          className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-amber-600"
+        >
+          <MessageCircle className="h-4 w-4" /> Our Stories <ArrowRight className="h-4 w-4" />
+        </Link>
+      </section>
+
+      <section id="our-stories" className="hidden" style={{
+        borderColor: isDark ? 'rgb(23 23 23)' : 'rgb(229 231 235)'
+      }}>
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 gap-4">
+          <div>
+            <span className={`text-[11px] font-black tracking-[0.2em] uppercase flex items-center gap-2 ${
+              isDark ? 'text-amber-500' : 'text-amber-600'
+            }`}>
+              <MessageCircle className="w-3 h-3 fill-current" /> Our Stories
+            </span>
+            <h2 className={`text-3xl md:text-4xl font-black uppercase tracking-tighter mt-2 ${
+              isDark ? 'text-neutral-100' : 'text-stone-900'
+            }`}>
+              Community Voices & Top Reviews
+            </h2>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowStoryModal(true)}
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+                isDark
+                  ? 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+                  : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
+              }`}
+            >
+              <Camera className="w-4 h-4" /> Share Story
+            </button>
+            <button
+              onClick={() => setShowReviewModal(true)}
+              className="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2"
+            >
+              <Star className="w-4 h-4 fill-current" /> Leave a Review
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+          {COMMUNITY_PREVIEW_REVIEWS.map((review, index) => (
+            <motion.div
+              key={review.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className={`relative min-w-0 rounded-2xl p-5 md:p-6 hover:border-amber-500/30 transition-all group border flex flex-col ${
+                isDark
+                  ? 'bg-neutral-900/50 border-neutral-800'
+                  : 'bg-white border-stone-200 shadow-sm'
+              }`}
+            >
+              <Quote className={`absolute top-4 right-4 w-8 h-8 transition-colors ${
+                isDark ? 'text-amber-500/10 group-hover:text-amber-500/20' : 'text-amber-500/15 group-hover:text-amber-500/25'
+              }`} />
+
+              <div className="flex items-center gap-1 mb-4">
+                {[...Array(5)].map((_, idx) => (
+                  <Star
+                    key={idx}
+                    className={`w-4 h-4 ${idx < review.rating ? 'text-amber-500 fill-current' : isDark ? 'text-neutral-700' : 'text-stone-300'}`}
+                  />
+                ))}
+              </div>
+
+              <p className={`text-sm leading-relaxed mb-6 italic flex-grow break-words ${
+                isDark ? 'text-neutral-400' : 'text-stone-600'
+              }`}>
+                "{review.comment}"
+              </p>
+
+              <div className={`pt-4 border-t ${
+                isDark ? 'border-neutral-800' : 'border-stone-100'
+              }`}>
+                <div className="mb-3">
+                  <p className={`text-sm font-bold break-words ${isDark ? 'text-neutral-100' : 'text-stone-900'}`}>{review.name}</p>
+                  <p className={`text-[10px] uppercase tracking-wider break-words ${isDark ? 'text-neutral-500' : 'text-stone-500'}`}>
+                    Ordered: {review.dish}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <SocialBadge platform="instagram" handle={review.socials.instagram} isDark={isDark} />
+                  <SocialBadge platform="twitter" handle={review.socials.twitter} isDark={isDark} />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-16">
+          <div className="text-center mb-8">
+            <h3 className={`text-2xl md:text-3xl font-black uppercase tracking-tight ${
+              isDark ? 'text-neutral-100' : 'text-stone-900'
+            }`}>Top Social Reviews</h3>
+            <p className={`mt-2 text-sm ${isDark ? 'text-neutral-500' : 'text-stone-600'}`}>
+              Real experiences shared by our community
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
+            {SOCIAL_REVIEWS.map((review, index) => (
+              <motion.article
+                key={review.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+                className={`min-w-0 rounded-2xl border p-5 md:p-6 ${
+                  isDark
+                    ? 'bg-neutral-900/50 border-neutral-800'
+                    : 'bg-white border-stone-200 shadow-sm'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-3xl shrink-0" aria-hidden="true">{review.avatar}</span>
+                    <div className="min-w-0">
+                      <p className={`text-xs font-bold break-words ${isDark ? 'text-neutral-200' : 'text-stone-800'}`}>
+                        {review.author}
+                      </p>
+                      <p className={`text-[10px] break-all ${isDark ? 'text-neutral-500' : 'text-stone-500'}`}>
+                        {review.handle}
+                      </p>
+                    </div>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-bold uppercase ${
+                    isDark ? 'bg-amber-500/15 text-amber-400' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {review.platform}
+                  </span>
+                </div>
+
+                <div className="flex gap-1 mb-3" aria-label={`${review.rating} out of 5 stars`}>
+                  {Array.from({ length: review.rating }).map((_, starIndex) => (
+                    <Star key={starIndex} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+
+                <p className={`text-sm leading-relaxed break-words ${isDark ? 'text-neutral-300' : 'text-stone-700'}`}>
+                  “{review.text}”
+                </p>
+                <p className={`mt-4 text-[10px] ${isDark ? 'text-neutral-500' : 'text-stone-500'}`}>
+                  Posted {review.timestamp}
+                </p>
+              </motion.article>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-8">
+            <a
+              href="#"
+              className={`px-6 py-3 rounded-xl font-bold text-sm flex flex-wrap justify-center items-center gap-2 text-center transition-all ${
+                isDark
+                  ? 'bg-amber-600 hover:bg-amber-500 text-white'
+                  : 'bg-amber-500 hover:bg-amber-600 text-white'
+              }`}
+            >
+              <Share2 className="w-4 h-4" />
+              <span>Follow Our Social Media</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {showReviewModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+              onClick={() => setShowReviewModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                className={`border rounded-2xl w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto ${
+                  isDark ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-stone-200'
+                }`}
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className={`text-xl font-black ${isDark ? 'text-neutral-100' : 'text-stone-900'}`}>Rate Your Experience</h3>
+                  <button onClick={() => setShowReviewModal(false)} className={`p-2 rounded-full transition-colors ${isDark ? 'hover:bg-neutral-800' : 'hover:bg-stone-100'}`}>
+                    <X className="w-5 h-5 text-stone-500" />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className={`text-xs font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>Your Rating</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewRating(star)}
+                          onMouseEnter={() => setHoverReviewRating(star)}
+                          onMouseLeave={() => setHoverReviewRating(0)}
+                        >
+                          <Star className={`w-8 h-8 transition-all ${
+                            star <= (hoverReviewRating || reviewRating)
+                              ? 'text-amber-500 fill-current scale-110'
+                              : isDark ? 'text-neutral-700' : 'text-stone-300'
+                          }`} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={`text-xs font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>Your Name</label>
+                    <input className={`w-full px-4 py-3 rounded-xl border focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-amber-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-amber-500'}`} placeholder="Jane W." />
+                  </div>
+
+                  <div>
+                    <label className={`text-xs font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>Dish You Ordered</label>
+                    <input className={`w-full px-4 py-3 rounded-xl border focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-amber-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-amber-500'}`} placeholder="Nyama Platter" />
+                  </div>
+
+                  <div>
+                    <label className={`text-xs font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>Review</label>
+                    <textarea rows="4" className={`w-full px-4 py-3 rounded-xl border resize-none focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-amber-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-amber-500'}`} placeholder="Tell us about your experience..." />
+                  </div>
+
+                  <div className={`pt-2 border-t ${isDark ? 'border-neutral-800' : 'border-stone-100'}`}>
+                    <label className={`text-xs font-bold uppercase tracking-wider mb-3 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>
+                      Connect your socials (optional)
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="relative">
+                        <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                        <input
+                          value={reviewInstagram}
+                          onChange={(e) => setReviewInstagram(e.target.value)}
+                          aria-label="Instagram handle"
+                          className={`w-full px-4 py-3 pl-10 rounded-xl border focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-pink-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-pink-500'}`}
+                          placeholder="Instagram handle"
+                        />
+                      </div>
+                      <div className="relative">
+                        <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                        <input
+                          value={reviewTwitter}
+                          onChange={(e) => setReviewTwitter(e.target.value)}
+                          aria-label="X or Twitter handle"
+                          className={`w-full px-4 py-3 pl-10 rounded-xl border focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-sky-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-sky-500'}`}
+                          placeholder="X / Twitter handle"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowReviewModal(false)}
+                    className="w-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                  >
+                    <Send className="w-4 h-4" /> Submit Review
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showStoryModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+              onClick={() => setShowStoryModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                className={`w-full max-w-lg rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto ${
+                  isDark ? 'bg-neutral-900 border border-neutral-800' : 'bg-white border border-stone-200'
+                }`}
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className={`text-xl font-black ${isDark ? 'text-neutral-100' : 'text-stone-900'}`}>Share Your Story</h3>
+                  <button onClick={() => setShowStoryModal(false)} className={`p-2 rounded-full transition-colors ${isDark ? 'hover:bg-neutral-800' : 'hover:bg-stone-100'}`}>
+                    <X className="w-5 h-5 text-stone-500" />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className={`text-xs font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>Your Name</label>
+                    <input value={storyName} onChange={(e) => setStoryName(e.target.value)} className={`w-full px-4 py-3 rounded-xl border focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-amber-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-amber-500'}`} placeholder="Your name" />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className={`text-xs font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>Instagram Handle</label>
+                      <input value={storyHandle} onChange={(e) => setStoryHandle(e.target.value)} className={`w-full px-4 py-3 rounded-xl border focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-amber-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-amber-500'}`} placeholder="@yourhandle" />
+                    </div>
+                    <div>
+                      <label className={`text-xs font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>X / Twitter Handle</label>
+                      <input value={storyTwitter} onChange={(e) => setStoryTwitter(e.target.value)} className={`w-full px-4 py-3 rounded-xl border focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-sky-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-sky-500'}`} placeholder="@yourhandle" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={`text-xs font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>Story Caption</label>
+                    <textarea value={storyCaption} onChange={(e) => setStoryCaption(e.target.value)} rows="4" className={`w-full px-4 py-3 rounded-xl border resize-none focus:outline-none ${isDark ? 'bg-neutral-800 border-neutral-700 text-white placeholder-neutral-500 focus:border-amber-500' : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-amber-500'}`} placeholder="Share the moment that made your visit memorable..." />
+                  </div>
+
+                  <div className={`rounded-xl border border-dashed p-4 flex items-center justify-center gap-2 ${isDark ? 'border-neutral-700 bg-neutral-800/60 text-neutral-300' : 'border-stone-300 bg-stone-50 text-stone-600'}`}>
+                    <Camera className="w-4 h-4" /> Add a photo moment
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowStoryModal(false)}
+                    className="w-full bg-stone-900 hover:bg-stone-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white text-xs font-bold py-3 rounded-xl uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                  >
+                    <Send className="w-4 h-4" /> Submit Story
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </section>
+
       {/* 4. HIGH-CONVERSION BEST SELLERS COMPONENT */}
       <section className="max-w-7xl mx-auto px-4 md:px-6 py-16 border-t border-neutral-900">
         <motion.div
@@ -774,168 +1156,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. SOCIAL MEDIA REVIEWS & TOP POSTS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-20 border-t" style={{
-        borderColor: isDark ? 'rgb(23 23 23)' : 'rgb(229 231 235)'
-      }}>
-        <motion.div
-          initial="hidden" whileInView="visible" viewport={{ once: true }}
-          className="text-center space-y-3 mb-16"
-        >
-          <span className={`text-[11px] font-black tracking-[0.2em] uppercase transition-colors duration-300 flex items-center justify-center gap-2 ${
-            isDark ? 'text-blue-500' : 'text-blue-600'
-          }`}>
-            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-              isDark ? 'bg-blue-500' : 'bg-blue-600'
-            }`} />
-            What People Are Saying
-            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-              isDark ? 'bg-blue-500' : 'bg-blue-600'
-            }`} />
-          </span>
-          <h2 className={`text-4xl md:text-5xl font-black uppercase tracking-tighter transition-colors duration-300 ${
-            isDark ? 'text-neutral-100' : 'text-gray-900'
-          }`}>Top Social Reviews</h2>
-          <p className={`text-base transition-colors duration-300 ${
-            isDark ? 'text-neutral-500' : 'text-gray-600'
-          }`}>Real experiences from our community across social platforms</p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
-          {SOCIAL_REVIEWS.map((review, idx) => (
-            <motion.div
-              key={review.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              whileHover={{ y: -10, scale: 1.02 }}
-              className={`group relative rounded-2xl p-6 transition-all duration-300 border backdrop-blur-sm overflow-hidden ${
-                isDark
-                  ? 'bg-gradient-to-br from-neutral-900/60 via-neutral-900/40 to-blue-900/20 border-blue-500/20 hover:border-blue-500/50 shadow-lg shadow-blue-900/10'
-                  : 'bg-gradient-to-br from-white/60 via-white/40 to-blue-100/20 border-blue-200/40 hover:border-blue-400/60 shadow-lg shadow-blue-200/20'
-              }`}
-            >
-              {/* Animated background glow */}
-              <div className={`absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${
-                isDark
-                  ? 'bg-gradient-to-r from-blue-600/10 via-transparent to-blue-600/10'
-                  : 'bg-gradient-to-r from-blue-400/10 via-transparent to-blue-400/10'
-              }`} />
-
-              <div className="relative z-10">
-                {/* Header with Avatar & Platform */}
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="text-4xl p-2 rounded-xl transition-transform duration-300 group-hover:scale-110" style={{
-                      background: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.15)'
-                    }}>
-                      {review.avatar}
-                    </div>
-                    <div>
-                      <p className={`text-xs font-black uppercase tracking-wider transition-colors duration-300 ${
-                        isDark ? 'text-neutral-300' : 'text-gray-800'
-                      }`}>{review.author}</p>
-                      <p className={`text-[10px] transition-colors duration-300 ${
-                        isDark ? 'text-neutral-500' : 'text-gray-600'
-                      }`}>{review.handle}</p>
-                    </div>
-                  </div>
-                  <span className={`text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full transition-all duration-300 ${
-                    isDark
-                      ? 'bg-blue-500/15 text-blue-400 group-hover:bg-blue-500/25'
-                      : 'bg-blue-500/20 text-blue-600 group-hover:bg-blue-500/35'
-                  }`}>
-                    {review.platform}
-                  </span>
-                </div>
-
-                {/* Star Rating */}
-                <div className="flex gap-1.5 mb-4">
-                  {Array.from({ length: review.rating }).map((_, i) => (
-                    <motion.div key={i} whileHover={{ scale: 1.2 }}>
-                      <Star className={`w-4 h-4 fill-yellow-400 transition-colors duration-300 ${
-                        isDark ? 'text-yellow-400' : 'text-yellow-500'
-                      }`} />
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Review Text */}
-                <p className={`text-[13px] leading-relaxed mb-5 font-medium transition-colors duration-300 ${
-                  isDark ? 'text-neutral-300' : 'text-gray-800'
-                }`}>
-                  "{review.text}"
-                </p>
-
-                {/* Engagement Metrics */}
-                <div className={`flex items-center gap-5 pb-5 border-b transition-colors duration-300 ${
-                  isDark ? 'border-neutral-700/50' : 'border-gray-300/50'
-                }`}>
-                  <div className="flex items-center gap-2 text-[11px]">
-                    <Heart className={`w-4 h-4 transition-all duration-300 group-hover:scale-110 ${
-                      isDark ? 'text-red-500/70' : 'text-red-500/70'
-                    }`} />
-                    <span className={`font-bold transition-colors duration-300 ${
-                      isDark ? 'text-neutral-400' : 'text-gray-600'
-                    }`}>{(review.likes / 1000).toFixed(1)}k</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px]">
-                    <MessageSquare className={`w-4 h-4 transition-all duration-300 group-hover:scale-110 ${
-                      isDark ? 'text-blue-500/70' : 'text-blue-500/70'
-                    }`} />
-                    <span className={`font-bold transition-colors duration-300 ${
-                      isDark ? 'text-neutral-400' : 'text-gray-600'
-                    }`}>{review.replies}</span>
-                  </div>
-                </div>
-
-                {/* Timestamp */}
-                <p className={`text-[10px] mt-4 transition-colors duration-300 ${
-                  isDark ? 'text-neutral-600' : 'text-gray-500'
-                }`}>
-                  Posted {review.timestamp}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* CTA Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex justify-center"
-        >
-          <motion.a
-            href="#"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className={`px-10 py-4 rounded-2xl font-bold text-base flex items-center gap-3 transition-all duration-300 shadow-xl ${
-              isDark
-                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white shadow-blue-900/40'
-                : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white shadow-blue-400/40'
-            }`}
-          >
-            <Share2 className="w-5 h-5" />
-            <span>Follow Our Social Media</span>
-            <ArrowRight className="w-4 h-4" />
-          </motion.a>
-        </motion.div>
-      </section>
-
       {/* 5. SYSTEMS AUTOMATION DETAILED FOOTER */}
-      <footer className="bg-neutral-950 border-t border-neutral-900 pt-16 pb-8 px-4 md:px-6 mt-20">
+      <footer className={`border-t pt-16 pb-8 px-4 md:px-6 mt-20 transition-colors duration-300 ${
+        isDark
+          ? 'bg-neutral-950 border-neutral-900'
+          : 'bg-stone-100 border-stone-200'
+      }`}>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
 
           {/* Column 1: Core Logistics Meta */}
           <div className="space-y-4">
-            <h3 className="text-lg font-serif text-amber-500 italic">Savanna Grill</h3>
-            <p className="text-xs text-neutral-500 leading-relaxed">
+            <h3 className={`text-lg font-serif italic ${isDark ? 'text-amber-500' : 'text-amber-600'}`}>Savanna Grill</h3>
+            <p className={`text-xs leading-relaxed ${isDark ? 'text-neutral-500' : 'text-stone-600'}`}>
               Authentic Kenyan cuisine crafted with passion. Scan, browse, and order seamlessly straight to your table with our digital menu system.
             </p>
-            <div className="flex items-center gap-2 text-[10px] text-emerald-500 font-mono bg-emerald-500/5 px-2 py-1 rounded w-fit">
+            <div className={`flex items-center gap-2 text-[10px] font-mono px-2 py-1 rounded w-fit ${
+              isDark
+                ? 'text-emerald-500 bg-emerald-500/5'
+                : 'text-emerald-600 bg-emerald-500/10'
+            }`}>
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               System Sync Active
             </div>
@@ -943,8 +1182,8 @@ export default function HomePage() {
 
           {/* Column 2: Operation Hubs */}
           <div className="space-y-4">
-            <h4 className="text-xs font-black text-neutral-300 uppercase tracking-wider">Integrated Hubs</h4>
-            <ul className="space-y-2 text-xs text-neutral-500">
+            <h4 className={`text-xs font-black uppercase tracking-wider ${isDark ? 'text-neutral-300' : 'text-stone-800'}`}>Integrated Hubs</h4>
+            <ul className={`space-y-2 text-xs ${isDark ? 'text-neutral-500' : 'text-stone-600'}`}>
               <li className="flex items-center gap-2"><div className="w-1 h-1 bg-amber-500 rounded-full" /> Main Dining Room Terminal</li>
               <li className="flex items-center gap-2"><div className="w-1 h-1 bg-amber-500 rounded-full" /> Food Court Express Hub</li>
               <li className="flex items-center gap-2"><div className="w-1 h-1 bg-amber-500 rounded-full" /> Cloud Delivery Kitchen</li>
@@ -953,8 +1192,8 @@ export default function HomePage() {
 
           {/* Column 3: Tech Architecture Stack Indicators */}
           <div className="space-y-4">
-            <h4 className="text-xs font-black text-neutral-300 uppercase tracking-wider">Core Integrations</h4>
-            <ul className="space-y-2 text-xs text-neutral-500">
+            <h4 className={`text-xs font-black uppercase tracking-wider ${isDark ? 'text-neutral-300' : 'text-stone-800'}`}>Core Integrations</h4>
+            <ul className={`space-y-2 text-xs ${isDark ? 'text-neutral-500' : 'text-stone-600'}`}>
               <li className="flex items-center gap-2"><Server className="w-3 h-3" /> Lipana / Daraja M-Pesa API</li>
               <li className="flex items-center gap-2"><MessageCircle className="w-3 h-3" /> WhatsApp Web Interface Hook</li>
               <li className="flex items-center gap-2"><Cloud className="w-3 h-3" /> Supabase Realtime Storage</li>
@@ -963,29 +1202,67 @@ export default function HomePage() {
 
           {/* Column 4: Local Sourcing & Access Credentials */}
           <div className="space-y-4">
-            <h4 className="text-xs font-black text-neutral-300 uppercase tracking-wider flex items-center gap-2">
+            <h4 className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 ${isDark ? 'text-neutral-300' : 'text-stone-800'}`}>
               <ShieldCheck className="w-4 h-4 text-emerald-500" /> Sourcing Standard
             </h4>
-            <p className="text-xs text-neutral-500 leading-relaxed">
+            <p className={`text-xs leading-relaxed ${isDark ? 'text-neutral-500' : 'text-stone-600'}`}>
               All poultry and beef structures are 100% Halal certified and sourced daily from verified local providers in Nairobi County.
             </p>
           </div>
         </div>
 
         {/* Closing Platform Runtime Anchor */}
-        <div className="max-w-7xl mx-auto pt-8 border-t border-neutral-900 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-[11px] text-neutral-600">
+        <div className={`max-w-7xl mx-auto pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 ${
+          isDark ? 'border-neutral-900 text-neutral-600' : 'border-stone-300 text-stone-600'
+        }`}>
+          <p className="text-[11px]">
             © {new Date().getFullYear()} Savanna Grill Operations. All rights reserved.
           </p>
-          <p className="text-[10px] font-mono text-neutral-700 flex items-center gap-2">
+          <div className={`text-[10px] font-mono flex items-center gap-2 ${isDark ? 'text-neutral-700' : 'text-stone-500'}`}>
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" />
-            pipeline-status: secure // env: production-v2.4
-          </p>
+            <span>pipeline-status: secure // env: production-v2.4</span>
+          </div>
         </div>
       </footer>
 
       <FloatingCart />
     </div>
+  );
+}
+
+function SocialBadge({ platform, handle, isDark }) {
+  if (!handle) return null;
+
+  const cleanHandle = handle.trim().replace(/^@+/, '');
+  const isInstagram = platform === 'instagram';
+  const isValidHandle = isInstagram
+    ? /^[a-zA-Z0-9._]{1,30}$/.test(cleanHandle)
+    : /^[a-zA-Z0-9_]{1,15}$/.test(cleanHandle);
+  if (!isValidHandle) return null;
+
+  const Icon = isInstagram ? Instagram : Twitter;
+  const profileUrl = isInstagram
+    ? `https://instagram.com/${cleanHandle}`
+    : `https://x.com/${cleanHandle}`;
+
+  return (
+    <a
+      href={profileUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`View ${isInstagram ? 'Instagram' : 'X'} profile for @${cleanHandle}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-transform hover:scale-105 ${
+        isInstagram
+          ? 'bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 text-white'
+          : isDark
+            ? 'bg-white text-neutral-900'
+            : 'bg-neutral-900 text-white'
+      }`}
+    >
+      <Icon className="w-3 h-3" />
+      <span>@{cleanHandle}</span>
+      <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+    </a>
   );
 }
 

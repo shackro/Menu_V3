@@ -25,7 +25,7 @@ export default function App() {
     <ThemeProvider>
       <CurrencyProvider>
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <div className="min-h-screen bg-gray-50 dark:bg-dark text-gray-900 dark:text-white transition-colors duration-300 font-sans">
+          <div className="min-h-screen bg-stone-50 dark:bg-neutral-950 text-stone-900 dark:text-neutral-50 transition-colors duration-300 font-sans">
 
             {/* Clean fade-in animation on mount (No blur/scale effects) */}
             <motion.div

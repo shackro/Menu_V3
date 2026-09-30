@@ -57,71 +57,6 @@ export default function HeroSection() {
         />
       </motion.div>
 
-      {/* Simple SVG Thread Connector (subtle, clean) */}
-      <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none hidden md:block">
-        <defs>
-          <linearGradient id="threadGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={isDark ? "#f59e0b" : "#d97706"} stopOpacity="0.2" />
-            <stop offset="100%" stopColor={isDark ? "#f59e0b" : "#d97706"} stopOpacity="0.05" />
-          </linearGradient>
-        </defs>
-        {/* Single elegant thread from chef to headline area */}
-        <motion.path
-          d="M 120 140 Q 300 200 500 350"
-          fill="none"
-          stroke="url(#threadGradient)"
-          strokeWidth="1.5"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.5 }}
-          transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
-        />
-      </svg>
-
-      {/* Chef Profile Widget - Top Left */}
-      <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="absolute top-20 left-4 md:left-8 z-30"
-      >
-        <div className="relative group">
-          <div className={`absolute inset-0 rounded-full blur-xl transition-colors duration-500 ${
-            isDark ? 'bg-amber-500/15' : 'bg-amber-500/10'
-          }`} />
-          <img
-            src="https://images.unsplash.com/photo-1581299894007-aaa50297cf16?auto=format&fit=crop&q=80"
-            alt="Chef Marcus"
-            className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full object-cover transition-all duration-300 ${
-              isDark
-                ? 'border-2 border-amber-500/50 shadow-2xl shadow-amber-500/20'
-                : 'border-2 border-amber-600/40 shadow-lg shadow-amber-600/10'
-            }`}
-          />
-          <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${
-            isDark ? 'bg-green-500 border-black' : 'bg-green-500 border-white'
-          }`}>
-            <div className="w-1.5 h-1.5 bg-white rounded-full" />
-          </div>
-        </div>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-3"
-        >
-          <p className={`font-bold text-sm flex items-center gap-1.5 transition-colors duration-300 ${
-            isDark ? 'text-white' : 'text-gray-900'
-          }`}>
-            🍳 Chef Marcus
-          </p>
-          <p className={`text-xs italic mt-1 transition-colors duration-300 ${
-            isDark ? 'text-gray-400' : 'text-gray-600'
-          }`}>
-            "Crafted with passion"
-          </p>
-        </motion.div>
-      </motion.div>
-
       {/* Live Status Badge - Top Right */}
       <motion.div
         initial={{ opacity: 0, x: 30 }}
@@ -139,7 +74,6 @@ export default function HeroSection() {
             animate={{ scale: [1, 1.3, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
-          <span className="text-xs font-semibold">Savanna Grill</span>
           <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">LIVE</span>
         </div>
       </motion.div>
@@ -206,15 +140,38 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.1, duration: 0.6 }}
-          className="relative mb-10"
+          className="relative mx-auto mb-10 w-full max-w-2xl"
         >
-          <p className={`text-lg md:text-xl max-w-2xl mx-auto leading-relaxed px-4 transition-colors duration-300 ${
+          <p className={`text-lg md:text-xl leading-relaxed px-4 transition-colors duration-300 ${
             isDark ? 'text-gray-300' : 'text-gray-700'
           }`}>
-            Authentic Kenyan cuisine crafted with passion.
-            <span className={`font-semibold ml-1 transition-colors duration-300 ${
-              isDark ? 'text-amber-500' : 'text-amber-600'
-            }`}>Scan, browse, and order</span> seamlessly straight to your table.
+            <span className="block">Authentic Kenyan cuisine crafted with passion.</span>
+            <span className="mt-1 flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className={`h-px min-w-3 flex-1 ${
+                  isDark
+                    ? 'bg-gradient-to-r from-transparent to-amber-500/70'
+                    : 'bg-gradient-to-r from-transparent to-amber-600/70'
+                }`}
+              />
+              <span className="min-w-0 text-center">
+                <span className={`font-semibold transition-colors duration-300 ${
+                  isDark ? 'text-amber-500' : 'text-amber-600'
+                }`}>
+                  Scan, browse, and order
+                </span>
+                {' '}seamlessly straight to your table.
+              </span>
+              <span
+                aria-hidden="true"
+                className={`h-px min-w-3 flex-1 ${
+                  isDark
+                    ? 'bg-gradient-to-l from-transparent to-amber-500/70'
+                    : 'bg-gradient-to-l from-transparent to-amber-600/70'
+                }`}
+              />
+            </span>
           </p>
         </motion.div>
 
