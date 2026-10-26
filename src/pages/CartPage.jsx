@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '@/store/useCart';
-import { useUserStore } from '@/store/useUser';
-import WhatsAppCheckout from '@/components/cart/WhatsAppCheckout';
 import { formatKES } from '@/utils/format';
 import { Trash2, Plus, Minus, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -13,10 +11,11 @@ export default function CartPage() {
   const setTableId = useCartStore((state) => state.setTableId);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const removeItem = useCartStore((state) => state.removeItem);
-  const clearCart = useCartStore((state) => state.clearCart);
+  const emptyCart = useCartStore((state) => state.emptyCart);
   const getTotal = useCartStore((state) => state.getTotal);
   
   const [localTableId, setLocalTableId] = useState(tableId || '');
+  const [confirmEmptyCart, setConfirmEmptyCart] = useState(false);
 
   const handleTableIdChange = (e) => {
     const val = e.target.value;
@@ -104,7 +103,37 @@ export default function CartPage() {
           <ArrowLeft className="w-4 h-4" /> Back to Menu
         </Link>
 
-        <h1 className="text-3xl font-bold mb-6">Your Order</h1>
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <h1 className="text-3xl font-bold">Your Order</h1>
+          <button
+            type="button"
+            onClick={() => setConfirmEmptyCart(true)}
+            className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-red-600 transition hover:bg-red-500/10 dark:text-red-400"
+          >
+            <Trash2 className="h-4 w-4" /> Empty cart
+          </button>
+        </div>
+
+        {confirmEmptyCart && (
+          <div role="alertdialog" aria-label="Confirm empty cart" className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+            <p className="text-sm font-semibold">Remove every item from your cart?</p>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setConfirmEmptyCart(false)} className="rounded-lg px-3 py-2 text-xs font-bold hover:bg-current/10">
+                Keep items
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  emptyCart();
+                  setConfirmEmptyCart(false);
+                }}
+                className="rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white hover:bg-red-500"
+              >
+                Empty cart
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Table Number Input (if not set via QR) */}
         {!tableId && (
@@ -177,7 +206,13 @@ export default function CartPage() {
           </div>
         </div>
 
-        <WhatsAppCheckout />
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event('savanna:open-cart'))}
+          className="mt-5 flex w-full items-center justify-center gap-3 rounded-2xl bg-amber-500 py-4 text-lg font-bold text-neutral-950 shadow-xl transition hover:bg-amber-400 active:scale-[0.99]"
+        >
+          Continue to checkout
+        </button>
       </div>
     </div>
   );

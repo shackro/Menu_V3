@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Sun, Moon, ChevronDown } from 'lucide-react';
+import { ShoppingBag, Sun, Moon, ChevronDown, ClipboardList } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/store/useCart';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -168,8 +168,23 @@ const iconBtnClass = `${
             </AnimatePresence>
           </motion.button>
 
+          <Link
+            to="/orders"
+            aria-label="Order history and receipts"
+            title="Order history and receipts"
+            className={`rounded-full p-2 md:p-2.5 transition-all duration-300 ${iconBtnClass} ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
+          >
+            <ClipboardList className="h-5 w-5 md:h-6 md:w-6" />
+          </Link>
+
           {/* Cart Button with Animated Badge */}
-          <Link to="/cart" className="relative">
+          <button
+            type="button"
+            aria-label={location.pathname === '/staff' ? 'Cart unavailable on staff screen' : totalItems > 0 ? `Open cart, ${totalItems} items` : 'Open cart'}
+            disabled={location.pathname === '/staff'}
+            onClick={() => window.dispatchEvent(new Event('savanna:open-cart'))}
+            className="relative disabled:cursor-not-allowed disabled:opacity-50"
+          >
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -195,7 +210,7 @@ const iconBtnClass = `${
                 </motion.span>
               )}
             </AnimatePresence>
-          </Link>
+          </button>
           
         </div>
 

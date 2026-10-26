@@ -10,7 +10,6 @@ import {
 import { fetchMenuItems, getCmsImageUrl } from '@/api/cms';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useCartStore } from '@/store/useCart';
-import FloatingCart from '@/components/cart/FloatingCart';
 import HeroSection from '@/components/sections/HeroSection';
 
 const CATEGORIES = [
@@ -116,7 +115,6 @@ const COMMUNITY_PREVIEW_REVIEWS = [
 ];
 
 export default function HomePage() {
-  const [activeCategory, setActiveCategory] = useState("breakfast");
   const [whatsappToast, setWhatsappToast] = useState(() => {
     if (typeof window !== 'undefined') {
       const savedNumber = localStorage.getItem('userWhatsappNumber');
@@ -142,7 +140,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [breakfastPage, setBreakfastPage] = useState(1);
   const [lunchPage, setLunchPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
   const { format } = useCurrency();
   const addItem = useCartStore((state) => state.addItem);
 
@@ -438,7 +436,12 @@ export default function HomePage() {
           }`}>Discover the Flow</span>
           <h2 className={`text-xl md:text-2xl font-black uppercase tracking-tight transition-colors duration-300 ${
             isDark ? 'text-neutral-200' : 'text-stone-900'
-          }`}>Browse Categories</h2>
+          }`}>Choose Where to Begin</h2>
+          <p className={`mx-auto max-w-xl text-sm transition-colors duration-300 ${
+            isDark ? 'text-neutral-400' : 'text-stone-600'
+          }`}>
+            Pick a category to open its menu and start your order.
+          </p>
         </motion.div>
 
         <motion.div
@@ -448,48 +451,41 @@ export default function HomePage() {
         >
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
-            const isActive = activeCategory === cat.id;
+            const itemCount = menuItems.filter((item) =>
+              item.is_available && item.category?.name === cat.name
+            ).length;
             return (
-              <motion.button
+              <motion.div
                 key={cat.id}
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-300 ${
-                  isActive
-                    ? isDark
-                      ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/5'
-                      : 'bg-amber-50 border-amber-500/50 text-amber-700 shadow-md shadow-amber-500/10'
-                    : isDark
-                      ? 'bg-neutral-900/40 border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
-                      : 'bg-white border-stone-200 text-stone-600 hover:border-stone-300 hover:text-stone-900'
-                }`}
+                whileTap={{ scale: 0.97 }}
               >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all duration-300 ${
-                  isActive
-                    ? isDark
-                      ? 'bg-amber-500 text-black'
-                      : 'bg-amber-500 text-white'
-                    : isDark
-                      ? 'bg-neutral-800 group-hover:bg-neutral-700'
-                      : 'bg-stone-100 group-hover:bg-stone-200'
-                }`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <span className="text-[11px] font-bold tracking-tight truncate w-full text-center">{cat.name}</span>
-                <span className={`text-[9px] font-mono mt-0.5 transition-colors duration-300 ${
-                  isActive
-                    ? isDark
-                      ? 'text-amber-500/80'
-                      : 'text-amber-600'
-                    : isDark
-                      ? 'text-neutral-600'
-                      : 'text-stone-400'
-                }`}>
-                  12+ items
-                </span>
-              </motion.button>
+                <Link
+                  to={`/menu?category=${encodeURIComponent(cat.name)}`}
+                  aria-label={`Browse ${cat.name}, ${itemCount} available items`}
+                  className={`group flex min-h-32 flex-col items-center justify-center rounded-xl border p-3 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                    isDark
+                      ? 'border-neutral-800 bg-neutral-900/40 text-neutral-300 hover:border-amber-500/50 hover:bg-amber-500/10 hover:text-amber-300'
+                      : 'border-stone-200 bg-white text-stone-700 hover:border-amber-500/50 hover:bg-amber-50 hover:text-amber-800'
+                  }`}
+                >
+                  <div className={`mb-2 flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                    isDark
+                      ? 'bg-neutral-800 text-amber-400 group-hover:bg-amber-500 group-hover:text-black'
+                      : 'bg-stone-100 text-amber-700 group-hover:bg-amber-500 group-hover:text-white'
+                  }`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="w-full truncate text-center text-[11px] font-bold tracking-tight">{cat.name}</span>
+                  <span className={`mt-1 inline-flex items-center gap-1 text-[9px] font-semibold ${
+                    isDark ? 'text-neutral-500 group-hover:text-amber-400' : 'text-stone-500 group-hover:text-amber-700'
+                  }`}>
+                    {loading ? 'Explore menu' : `${itemCount} available`}
+                    <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                  </span>
+                </Link>
+              </motion.div>
             );
           })}
         </motion.div>
@@ -1225,7 +1221,6 @@ export default function HomePage() {
         </div>
       </footer>
 
-      <FloatingCart />
     </div>
   );
 }

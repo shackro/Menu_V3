@@ -55,6 +55,7 @@ export const useCartStore = create(
       })),
 
       clearCart: () => set({ items: [], tableId: null }),
+      emptyCart: () => set({ items: [] }),
       setTableId: (id) => set({ tableId: id }),
       getTotal: () => get().items.reduce((sum, item) => {
         const addonsTotal = item.addons ? item.addons.reduce((aSum, addon) => aSum + (addon.price * addon.quantity), 0) : 0;
